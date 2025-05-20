@@ -1,0 +1,57 @@
+<div class="hero-list-container">
+  <h2>Superhéroes</h2>
+
+  <div class="actions-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar superhéroe</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+        placeholder="Nombre del superhéroe"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="addHero()">
+      <mat-icon>add</mat-icon>
+      Añadir Superhéroe
+    </button>
+  </div>
+
+  <div class="heroes-grid">
+    <mat-card *ngFor="let hero of displayedHeroes" class="hero-card">
+      <div class="hero-avatar">
+        <div class="hero-initial">{{ hero.name.charAt(0) }}</div>
+      </div>
+      <mat-card-header>
+        <mat-card-title>{{ hero.name }}</mat-card-title>
+        <mat-card-subtitle *ngIf="hero.alterEgo">{{
+          hero.alterEgo
+        }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p *ngIf="hero.publisher">Editorial: {{ hero.publisher }}</p>
+        <p *ngIf="hero.powers && hero.powers.length > 0">
+          <strong>Poderes:</strong> {{ hero.powers.join(", ") }}
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="editHero(hero)">
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+        <button mat-button color="warn" (click)="deleteHero(hero)">
+          <mat-icon>delete</mat-icon> Eliminar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <mat-paginator
+    [length]="filteredHeroes.length"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageIndex]="pageIndex"
+    (page)="onPageChange($event)"
+  >
+  </mat-paginator>
+</div>
