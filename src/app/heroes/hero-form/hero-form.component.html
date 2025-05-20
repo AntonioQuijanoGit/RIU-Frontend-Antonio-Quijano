@@ -1,0 +1,78 @@
+<h2>{{ title }}</h2>
+
+<form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="hero-form">
+  <input type="hidden" formControlName="id">
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="name" placeholder="Nombre del superhéroe" required>
+    <mat-error *ngIf="heroForm.get('name')?.hasError('required')">
+      El nombre es obligatorio
+    </mat-error>
+    <mat-error *ngIf="heroForm.get('name')?.hasError('minlength')">
+      El nombre debe tener al menos 3 caracteres
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Alter Ego</mat-label>
+    <input matInput formControlName="alterEgo" placeholder="Identidad secreta">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Editorial</mat-label>
+    <mat-select formControlName="publisher">
+      <mat-option *ngFor="let publisher of publishers" [value]="publisher">
+        {{ publisher }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Primera aparición</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="firstAppearance">
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <div class="full-width powers-section">
+    <h3>Poderes</h3>
+    <div class="powers-input-container">
+      <mat-form-field appearance="outline" class="powers-input">
+        <mat-label>Añadir poder</mat-label>
+        <input matInput [(ngModel)]="newPower" [ngModelOptions]="{standalone: true}" placeholder="Nuevo poder">
+      </mat-form-field>
+      <button type="button" mat-mini-fab color="primary" (click)="addPower()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div class="powers-list">
+      <mat-chip-set>
+        <mat-chip *ngFor="let power of powers" (removed)="removePower(power)">
+          {{ power }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Descripción</mat-label>
+    <textarea matInput formControlName="description" rows="3" placeholder="Descripción del superhéroe"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>URL de la imagen</mat-label>
+    <input matInput formControlName="imageUrl" placeholder="URL de la imagen">
+  </mat-form-field>
+
+  <div class="form-actions">
+    <button type="button" mat-stroked-button (click)="onCancel()">Cancelar</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="heroForm.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Añadir' }}
+    </button>
+  </div>
+</form>

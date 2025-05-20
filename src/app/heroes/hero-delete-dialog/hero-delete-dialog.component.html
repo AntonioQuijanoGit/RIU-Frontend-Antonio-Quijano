@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Confirmar eliminación</h2>
+<mat-dialog-content>
+  <p>
+    ¿Estás seguro de que deseas eliminar al superhéroe
+    <strong>{{ data.hero.name }}</strong
+    >?
+  </p>
+  <p>Esta acción no se puede deshacer.</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Eliminar</button>
+</mat-dialog-actions>

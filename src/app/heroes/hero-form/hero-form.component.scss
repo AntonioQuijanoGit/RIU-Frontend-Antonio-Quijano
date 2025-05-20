@@ -1,0 +1,42 @@
+.hero-form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  min-width: 500px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.powers-section {
+  margin-bottom: 20px;
+
+  h3 {
+    margin-bottom: 10px;
+  }
+}
+
+.powers-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  .powers-input {
+    flex: 1;
+    margin-bottom: 0;
+  }
+}
+
+.powers-list {
+  margin-top: 10px;
+}
