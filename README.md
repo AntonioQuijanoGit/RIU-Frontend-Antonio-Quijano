@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # RIUFrontendAntonioQuijano
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
@@ -57,3 +58,7 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+=======
+# RIU-Frontend-Antonio-Quijano
+Prueba técnica frontend para RIU: Aplicación SPA en Angular para gestión de superhéroes con funcionalidades CRUD, paginación, y filtrado. Implementado con Angular Material, servicios reactivos y testing.
+>>>>>>> e93d2c6e645d1b1a1f8cf57eefb03eca18338116
