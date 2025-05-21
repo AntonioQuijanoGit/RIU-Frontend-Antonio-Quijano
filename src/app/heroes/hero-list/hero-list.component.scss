@@ -20,17 +20,51 @@ $transition-default: 0.25s ease;
   color: $text-primary;
 }
 
-// Encabezado
+// Encabezado (VERSIÓN MEJORADA CON ESTILO MÁS ELEGANTE)
 .app-header {
   margin-bottom: 30px;
   text-align: center;
+  background: linear-gradient(135deg, #3f51b5 0%, #7986cb 100%);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-  .app-title {
+.app-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 400; // Más ligero
+  letter-spacing: 1.5px; // Mayor espaciado entre letras
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: "Roboto", "Segoe UI", sans-serif; // Fuente más elegante
+
+  .title-icon {
     font-size: 32px;
-    color: $primary-color;
-    margin: 0;
-    padding: 20px 0;
-    font-weight: 500;
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+  }
+
+  .title-text {
+    transition: all 0.3s ease;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-title {
+    font-size: 22px;
+
+    .title-icon {
+      font-size: 24px;
+      height: 24px;
+      width: 24px;
+      margin-right: 8px;
+    }
   }
 }
 
@@ -302,7 +336,7 @@ $transition-default: 0.25s ease;
   white-space: nowrap;
 }
 
-// Paginación
+// Paginación (versión original)
 .pagination-container {
   background-color: $card-background;
   border-radius: $border-radius;
