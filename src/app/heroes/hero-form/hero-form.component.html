@@ -28,7 +28,7 @@
     />
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
+  <mat-form-field appearance="outline" class="full-width clickable-field">
     <mat-label>Editorial</mat-label>
     <mat-select formControlName="publisher">
       <mat-option *ngFor="let publisher of publishers" [value]="publisher">
@@ -37,7 +37,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
+  <mat-form-field appearance="outline" class="full-width clickable-field">
     <mat-label>Primera aparición</mat-label>
     <input
       matInput
@@ -60,7 +60,13 @@
           placeholder="Nuevo poder"
         />
       </mat-form-field>
-      <button type="button" mat-mini-fab color="primary" (click)="addPower()">
+      <button
+        type="button"
+        mat-mini-fab
+        color="primary"
+        class="add-power-button"
+        (click)="addPower()"
+      >
         <mat-icon>add</mat-icon>
       </button>
     </div>
@@ -87,7 +93,6 @@
     ></textarea>
   </mat-form-field>
 
-  <!-- Reemplaza el campo URL de imagen por este sistema de carga -->
   <div class="image-upload-section full-width">
     <h3>Imagen del superhéroe</h3>
 

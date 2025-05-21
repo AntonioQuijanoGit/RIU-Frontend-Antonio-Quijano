@@ -71,19 +71,21 @@ $transition-default: 0.25s ease;
   }
 }
 
+// Selector de vistas más sutil
 .view-selector {
   display: flex;
-  background-color: rgba($primary-color, 0.08);
+  background-color: rgba($primary-color, 0.05);
   border-radius: 24px;
   padding: 3px;
 
   button {
     border-radius: 20px;
     padding: 0 15px;
+    color: rgba($text-primary, 0.7);
 
     &.active {
-      background-color: $primary-color;
-      color: white;
+      background-color: rgba($primary-color, 0.15);
+      color: $primary-color;
     }
 
     .view-label {
@@ -92,9 +94,12 @@ $transition-default: 0.25s ease;
   }
 }
 
+// Modificar el botón de añadir (inversión de colores)
 .add-button {
   padding: 0 16px;
   height: 40px;
+  background-color: $primary-color;
+  color: white;
 }
 
 // Sección de héroes
@@ -105,7 +110,7 @@ $transition-default: 0.25s ease;
 .section-title {
   font-size: 18px;
   color: $text-secondary;
-  margin-bottom: 15px;
+  margin-bottom: 35px;
   font-weight: normal;
 }
 
@@ -130,6 +135,36 @@ $transition-default: 0.25s ease;
     box-shadow: $shadow-medium;
   }
 
+  // Invertir colores del nombre y alter ego
+  mat-card-header {
+    mat-card-title {
+      font-size: 1.25rem;
+      color: $primary-color;
+      font-weight: 500;
+    }
+
+    mat-card-subtitle {
+      font-size: 1rem;
+      color: $text-primary;
+      margin-top: 4px;
+    }
+  }
+
+  // Ajustar pesos visuales en la lista de poderes
+  .powers-list {
+    .powers-label {
+      font-weight: normal;
+      color: $text-secondary;
+      font-size: 0.85rem;
+    }
+
+    .powers-text {
+      color: $text-primary;
+      font-weight: 500;
+    }
+  }
+
+  // Estilos para los botones de acción
   .card-actions {
     display: flex;
     justify-content: space-between;
@@ -165,7 +200,7 @@ $transition-default: 0.25s ease;
   }
 
   &:hover .hero-image {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 }
 
@@ -198,19 +233,6 @@ $transition-default: 0.25s ease;
   margin-bottom: 8px;
 }
 
-.powers-list {
-  font-size: 0.9rem;
-
-  .powers-label {
-    font-weight: 500;
-    margin-right: 6px;
-  }
-
-  .powers-text {
-    color: $text-secondary;
-  }
-}
-
 // Vista de lista (tabla)
 .heroes-table-container {
   overflow: auto;
@@ -218,8 +240,17 @@ $transition-default: 0.25s ease;
   background-color: $card-background;
 }
 
-table {
+// Líneas divisorias más suaves en la tabla
+.heroes-table {
   width: 100%;
+
+  tr.mat-row {
+    border-bottom-color: #e9e9e9 !important;
+  }
+
+  tr.mat-header-row {
+    background-color: #f7f7f7;
+  }
 }
 
 .hero-row-info {
