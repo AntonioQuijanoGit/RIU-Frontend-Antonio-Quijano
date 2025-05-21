@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, delay, finalize } from 'rxjs/operators';
 import { Hero } from '../models/hero.model';
+import { LoadingService } from './loading.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HeroService {
-  // Mock data for heroes
   private heroes: Hero[] = [
     {
       id: 1,
@@ -165,66 +165,81 @@ export class HeroService {
     },
   ];
 
-  // BehaviorSubject to store and emit heroes
   private heroesSubject = new BehaviorSubject<Hero[]>(this.heroes);
 
-  constructor() {}
+  constructor(private loadingService: LoadingService) {}
 
-  // Get all heroes
   getHeroes(): Observable<Hero[]> {
-    return this.heroesSubject.asObservable();
-  }
-
-  // Get a single hero by id
-  getHeroById(id: number): Observable<Hero | undefined> {
-    return this.heroesSubject.pipe(
-      map((heroes) => heroes.find((hero) => hero.id === id))
+    this.loadingService.show();
+    return this.heroesSubject.asObservable().pipe(
+      delay(800), // Simular retraso
+      finalize(() => this.loadingService.hide())
     );
   }
 
-  // Find heroes by name (case insensitive)
+  getHeroById(id: number): Observable<Hero | undefined> {
+    this.loadingService.show();
+    return this.heroesSubject.pipe(
+      map((heroes) => heroes.find((hero) => hero.id === id)),
+      delay(800), // Simular retraso
+      finalize(() => this.loadingService.hide())
+    );
+  }
+
   findHeroesByName(term: string): Observable<Hero[]> {
+    this.loadingService.show();
     const lowerCaseTerm = term.toLowerCase();
     return this.heroesSubject.pipe(
       map((heroes) =>
         heroes.filter((hero) => hero.name.toLowerCase().includes(lowerCaseTerm))
-      )
+      ),
+      delay(800),
+      finalize(() => this.loadingService.hide())
     );
   }
 
-  // Add a new hero
   addHero(hero: Omit<Hero, 'id'>): Observable<Hero> {
-    // Generate a new ID
+    this.loadingService.show();
+
     const maxId = this.heroes.reduce((max, h) => (h.id > max ? h.id : max), 0);
     const newHero: Hero = { ...hero, id: maxId + 1 };
 
-    // Update the heroes array
     this.heroes = [...this.heroes, newHero];
     this.heroesSubject.next(this.heroes);
 
-    return of(newHero);
+    return of(newHero).pipe(
+      delay(1000),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
-  // Update an existing hero
   updateHero(updatedHero: Hero): Observable<Hero> {
-    // Find and update the hero
+    this.loadingService.show();
+
     this.heroes = this.heroes.map((hero) =>
       hero.id === updatedHero.id ? updatedHero : hero
     );
 
     this.heroesSubject.next(this.heroes);
-    return of(updatedHero);
+
+    return of(updatedHero).pipe(
+      delay(1000),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
-  // Delete a hero
   deleteHero(id: number): Observable<boolean> {
+    this.loadingService.show();
+
     const initialLength = this.heroes.length;
     this.heroes = this.heroes.filter((hero) => hero.id !== id);
 
-    // Check if a hero was actually deleted
     const success = initialLength > this.heroes.length;
     this.heroesSubject.next(this.heroes);
 
-    return of(success);
+    return of(success).pipe(
+      delay(1000),
+      finalize(() => this.loadingService.hide())
+    );
   }
 }
