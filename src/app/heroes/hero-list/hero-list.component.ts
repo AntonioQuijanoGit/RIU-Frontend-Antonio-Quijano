@@ -13,6 +13,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HeroService } from '../../core/services/hero.service';
 import { Hero } from '../../core/models/hero.model';
+import { HeroFormComponent } from '../hero-form/hero-form.component';
+import { HeroDeleteDialogComponent } from '../hero-delete-dialog/hero-delete-dialog.component';
 
 @Component({
   selector: 'app-hero-list',
@@ -139,17 +141,60 @@ export class HeroListComponent implements OnInit, OnDestroy {
   }
 
   addHero(): void {
-    // We'll implement this in the next phase
-    console.log('Add hero clicked');
+    const dialogRef = this.dialog.open(HeroFormComponent, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.heroService.addHero(result).subscribe((newHero) => {
+          // Actualiza la lista de héroes
+          this.heroService.getHeroes().subscribe((heroes) => {
+            this.heroes = heroes;
+            this.applyFilter();
+          });
+        });
+      }
+    });
   }
 
   editHero(hero: Hero): void {
-    // We'll implement this in the next phase
-    console.log('Edit hero clicked', hero);
+    const dialogRef = this.dialog.open(HeroFormComponent, {
+      width: '600px',
+      data: { hero },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.heroService.updateHero(result).subscribe((updatedHero) => {
+          // Actualiza la lista de héroes
+          this.heroService.getHeroes().subscribe((heroes) => {
+            this.heroes = heroes;
+            this.applyFilter();
+          });
+        });
+      }
+    });
   }
 
   deleteHero(hero: Hero): void {
-    // We'll implement this in the next phase
-    console.log('Delete hero clicked', hero);
+    const dialogRef = this.dialog.open(HeroDeleteDialogComponent, {
+      width: '400px',
+      data: { hero },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.heroService.deleteHero(hero.id).subscribe((success) => {
+          if (success) {
+            // Actualiza la lista de héroes
+            this.heroService.getHeroes().subscribe((heroes) => {
+              this.heroes = heroes;
+              this.applyFilter();
+            });
+          }
+        });
+      }
+    });
   }
 }
