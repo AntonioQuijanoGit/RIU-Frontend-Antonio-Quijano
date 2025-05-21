@@ -1,57 +1,191 @@
 <div class="hero-list-container">
-  <h2>Superhéroes</h2>
+  <header class="app-header">
+    <h1 class="app-title">Gestión de Superhéroes</h1>
+  </header>
 
-  <div class="actions-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Buscar superhéroe</mat-label>
-      <input
-        matInput
-        [formControl]="searchControl"
-        placeholder="Nombre del superhéroe"
-      />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+  <div class="controls-panel">
+    <div class="search-container">
+      <mat-form-field appearance="outline" color="primary">
+        <mat-label>Buscar superhéroe</mat-label>
+        <input
+          matInput
+          [formControl]="searchControl"
+          placeholder="Introduce nombre del superhéroe"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
 
-    <button mat-raised-button color="primary" (click)="addHero()">
-      <mat-icon>add</mat-icon>
-      Añadir Superhéroe
-    </button>
-  </div>
-
-  <div class="heroes-grid">
-    <mat-card *ngFor="let hero of displayedHeroes" class="hero-card">
-      <div class="hero-avatar">
-        <div class="hero-initial">{{ hero.name.charAt(0) }}</div>
+    <div class="action-controls">
+      <div class="view-selector" aria-label="Seleccionar modo de visualización">
+        <button
+          mat-button
+          [class.active]="viewMode === 'grid'"
+          (click)="switchView('grid')"
+          aria-label="Ver como tarjetas"
+        >
+          <mat-icon>grid_view</mat-icon>
+          <span class="view-label">Tarjetas</span>
+        </button>
+        <button
+          mat-button
+          [class.active]="viewMode === 'list'"
+          (click)="switchView('list')"
+          aria-label="Ver como lista"
+        >
+          <mat-icon>view_list</mat-icon>
+          <span class="view-label">Lista</span>
+        </button>
       </div>
-      <mat-card-header>
-        <mat-card-title>{{ hero.name }}</mat-card-title>
-        <mat-card-subtitle *ngIf="hero.alterEgo">{{
-          hero.alterEgo
-        }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p *ngIf="hero.publisher">Editorial: {{ hero.publisher }}</p>
-        <p *ngIf="hero.powers && hero.powers.length > 0">
-          <strong>Poderes:</strong> {{ hero.powers.join(", ") }}
-        </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary" (click)="editHero(hero)">
-          <mat-icon>edit</mat-icon> Editar
-        </button>
-        <button mat-button color="warn" (click)="deleteHero(hero)">
-          <mat-icon>delete</mat-icon> Eliminar
-        </button>
-      </mat-card-actions>
-    </mat-card>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="addHero()"
+        class="add-button"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Añadir Superhéroe</span>
+      </button>
+    </div>
   </div>
 
-  <mat-paginator
-    [length]="filteredHeroes.length"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="pageSizeOptions"
-    [pageIndex]="pageIndex"
-    (page)="onPageChange($event)"
-  >
-  </mat-paginator>
+  <section class="heroes-section">
+    <h2 class="section-title">
+      {{ filteredHeroes.length }} superhéroes encontrados
+    </h2>
+
+    <!-- Vista de grid (tarjetas) -->
+    <div *ngIf="viewMode === 'grid'" class="heroes-grid" role="list">
+      <mat-card
+        *ngFor="let hero of displayedHeroes"
+        class="hero-card"
+        role="listitem"
+      >
+        <div class="hero-avatar" [style.background-color]="getHeroColor(hero)">
+          <div class="hero-initial">{{ hero.name.charAt(0) }}</div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>{{ hero.name }}</mat-card-title>
+          <mat-card-subtitle *ngIf="hero.alterEgo">{{
+            hero.alterEgo
+          }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p *ngIf="hero.publisher" class="publisher-tag">
+            {{ hero.publisher }}
+          </p>
+          <p *ngIf="hero.powers && hero.powers.length > 0" class="powers-list">
+            <span class="powers-label">Poderes:</span>
+            <span class="powers-text">{{ hero.powers.join(", ") }}</span>
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" (click)="editHero(hero)">
+            <mat-icon>edit</mat-icon> Editar
+          </button>
+          <button mat-button color="warn" (click)="deleteHero(hero)">
+            <mat-icon>delete</mat-icon> Eliminar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Vista de lista (tabla) -->
+    <div
+      *ngIf="viewMode === 'list'"
+      class="heroes-table-container mat-elevation-z2"
+    >
+      <table
+        mat-table
+        [dataSource]="displayedHeroes"
+        aria-label="Lista de superhéroes"
+      >
+        <!-- Columna ID -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef scope="col">ID</th>
+          <td mat-cell *matCellDef="let hero">{{ hero.id }}</td>
+        </ng-container>
+
+        <!-- Columna Nombre -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef scope="col">Nombre</th>
+          <td mat-cell *matCellDef="let hero">
+            <div class="hero-row-info">
+              <div
+                class="hero-mini-avatar"
+                [style.background-color]="getHeroColor(hero)"
+              >
+                {{ hero.name.charAt(0) }}
+              </div>
+              <span class="hero-name">{{ hero.name }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Columna Alter Ego -->
+        <ng-container matColumnDef="alterEgo">
+          <th mat-header-cell *matHeaderCellDef scope="col">Alter Ego</th>
+          <td mat-cell *matCellDef="let hero">{{ hero.alterEgo || "-" }}</td>
+        </ng-container>
+
+        <!-- Columna Editorial -->
+        <ng-container matColumnDef="publisher">
+          <th mat-header-cell *matHeaderCellDef scope="col">Editorial</th>
+          <td mat-cell *matCellDef="let hero">
+            <span *ngIf="hero.publisher" class="publisher-chip">{{
+              hero.publisher
+            }}</span>
+            <span *ngIf="!hero.publisher">-</span>
+          </td>
+        </ng-container>
+
+        <!-- Columna Poderes -->
+        <ng-container matColumnDef="powers">
+          <th mat-header-cell *matHeaderCellDef scope="col">Poderes</th>
+          <td mat-cell *matCellDef="let hero" class="powers-cell">
+            {{ hero.powers?.join(", ") || "-" }}
+          </td>
+        </ng-container>
+
+        <!-- Columna Acciones -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef scope="col">Acciones</th>
+          <td mat-cell *matCellDef="let hero" class="actions-cell">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="editHero(hero)"
+              aria-label="Editar"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteHero(hero)"
+              aria-label="Eliminar"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </section>
+
+  <div class="pagination-container">
+    <mat-paginator
+      [length]="filteredHeroes.length"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="pageIndex"
+      (page)="onPageChange($event)"
+      aria-label="Seleccionar página"
+    >
+    </mat-paginator>
+  </div>
 </div>
