@@ -12,6 +12,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HeroService } from '../../core/services/hero.service';
+import {
+  PaginationService,
+  PageState,
+} from '../../core/services/pagination.service';
 import { Hero } from '../../core/models/hero.model';
 import { HeroFormComponent } from '../hero-form/hero-form.component';
 import { HeroDeleteDialogComponent } from '../hero-delete-dialog/hero-delete-dialog.component';
@@ -40,14 +44,11 @@ export class HeroListComponent implements OnInit, OnDestroy {
   heroes: Hero[] = [];
   filteredHeroes: Hero[] = [];
   displayedHeroes: Hero[] = [];
+  paginationState!: PageState;
 
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
-
-  // Pagination
-  pageSize = 5;
-  pageSizeOptions: number[] = [5, 10, 25];
-  pageIndex = 0;
+  private paginationSubscription!: Subscription;
 
   // View mode control
   viewMode: 'grid' | 'list' = 'grid';
@@ -64,11 +65,30 @@ export class HeroListComponent implements OnInit, OnDestroy {
 
   constructor(
     private heroService: HeroService,
+    private paginationService: PaginationService,
     private dialog: MatDialog,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    // Inicializar el servicio de paginación
+    this.paginationService.initialize({
+      pageSize: 5,
+      pageSizeOptions: [5, 10, 25],
+      pageIndex: 0,
+      totalItems: 0,
+    });
+
+    // Suscribirse a cambios en el estado de paginación
+    this.paginationSubscription = this.paginationService
+      .getState()
+      .subscribe((state) => {
+        this.paginationState = state;
+        if (this.filteredHeroes.length > 0) {
+          this.updateDisplayedHeroes();
+        }
+      });
+
     // Get all heroes
     this.heroService.getHeroes().subscribe((heroes) => {
       this.heroes = heroes;
@@ -78,8 +98,8 @@ export class HeroListComponent implements OnInit, OnDestroy {
     // Subscribe to search field changes
     this.searchSubscription = this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe((value) => {
-        this.pageIndex = 0;
+      .subscribe(() => {
+        this.paginationService.resetToFirstPage();
         this.applyFilter();
       });
 
@@ -94,6 +114,9 @@ export class HeroListComponent implements OnInit, OnDestroy {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
+    if (this.paginationSubscription) {
+      this.paginationSubscription.unsubscribe();
+    }
   }
 
   applyFilter(): void {
@@ -107,21 +130,21 @@ export class HeroListComponent implements OnInit, OnDestroy {
       this.filteredHeroes = [...this.heroes];
     }
 
+    // Actualizar el total de elementos en el servicio de paginación
+    this.paginationService.setTotalItems(this.filteredHeroes.length);
     this.updateDisplayedHeroes();
   }
 
   updateDisplayedHeroes(): void {
-    const startIndex = this.pageIndex * this.pageSize;
-    this.displayedHeroes = this.filteredHeroes.slice(
-      startIndex,
-      startIndex + this.pageSize
+    // Usar el servicio para obtener los elementos paginados
+    this.displayedHeroes = this.paginationService.getPagedItems(
+      this.filteredHeroes
     );
   }
 
   onPageChange(event: PageEvent): void {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
-    this.updateDisplayedHeroes();
+    // Delegar al servicio
+    this.paginationService.onPageChange(event);
   }
 
   switchView(mode: 'grid' | 'list'): void {
