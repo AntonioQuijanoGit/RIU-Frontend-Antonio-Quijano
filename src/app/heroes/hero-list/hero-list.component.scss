@@ -131,6 +131,24 @@ $transition-default: 0.25s ease;
   }
 }
 
+// Nuevo componente: contenedor de imagen
+.hero-image-container {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-default;
+  }
+
+  &:hover .hero-image {
+    transform: scale(1.05);
+  }
+}
+
 .hero-avatar {
   height: 160px;
   display: flex;
@@ -199,6 +217,15 @@ table {
   align-items: center;
   font-weight: bold;
   color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  span {
+    // Solo mostrar la inicial cuando no hay imagen
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .hero-name {

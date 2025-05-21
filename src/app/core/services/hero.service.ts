@@ -97,7 +97,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1941, 2, 1),
       description: 'El Primer Vengador',
-      imageUrl: 'assets/images/captain-america.jpg',
+      imageUrl: 'assets/images/capitanamerica.jpg',
     },
     {
       id: 10,
@@ -117,7 +117,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1959, 9, 1),
       description: 'El Linterna Verde',
-      imageUrl: 'assets/images/green-lantern.jpg',
+      imageUrl: 'assets/images/greenlantern.jpg',
     },
     {
       id: 12,
@@ -127,7 +127,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1964, 3, 1),
       description: 'La espía rusa',
-      imageUrl: 'assets/images/black-widow.jpg',
+      imageUrl: 'assets/images/blackwidow.jpg',
     },
     {
       id: 13,

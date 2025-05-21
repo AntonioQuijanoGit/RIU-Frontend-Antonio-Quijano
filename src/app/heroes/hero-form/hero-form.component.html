@@ -1,11 +1,16 @@
 <h2>{{ title }}</h2>
 
 <form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="hero-form">
-  <input type="hidden" formControlName="id">
+  <input type="hidden" formControlName="id" />
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Nombre</mat-label>
-    <input matInput formControlName="name" placeholder="Nombre del superhéroe" required>
+    <input
+      matInput
+      formControlName="name"
+      placeholder="Nombre del superhéroe"
+      required
+    />
     <mat-error *ngIf="heroForm.get('name')?.hasError('required')">
       El nombre es obligatorio
     </mat-error>
@@ -16,7 +21,11 @@
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Alter Ego</mat-label>
-    <input matInput formControlName="alterEgo" placeholder="Identidad secreta">
+    <input
+      matInput
+      formControlName="alterEgo"
+      placeholder="Identidad secreta"
+    />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full-width">
@@ -30,7 +39,11 @@
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Primera aparición</mat-label>
-    <input matInput [matDatepicker]="picker" formControlName="firstAppearance">
+    <input
+      matInput
+      [matDatepicker]="picker"
+      formControlName="firstAppearance"
+    />
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
@@ -40,7 +53,12 @@
     <div class="powers-input-container">
       <mat-form-field appearance="outline" class="powers-input">
         <mat-label>Añadir poder</mat-label>
-        <input matInput [(ngModel)]="newPower" [ngModelOptions]="{standalone: true}" placeholder="Nuevo poder">
+        <input
+          matInput
+          [(ngModel)]="newPower"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Nuevo poder"
+        />
       </mat-form-field>
       <button type="button" mat-mini-fab color="primary" (click)="addPower()">
         <mat-icon>add</mat-icon>
@@ -61,18 +79,63 @@
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Descripción</mat-label>
-    <textarea matInput formControlName="description" rows="3" placeholder="Descripción del superhéroe"></textarea>
+    <textarea
+      matInput
+      formControlName="description"
+      rows="3"
+      placeholder="Descripción del superhéroe"
+    ></textarea>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>URL de la imagen</mat-label>
-    <input matInput formControlName="imageUrl" placeholder="URL de la imagen">
-  </mat-form-field>
+  <!-- Reemplaza el campo URL de imagen por este sistema de carga -->
+  <div class="image-upload-section full-width">
+    <h3>Imagen del superhéroe</h3>
+
+    <div class="image-preview" *ngIf="imagePreview">
+      <img [src]="imagePreview" alt="Vista previa" />
+    </div>
+
+    <div class="image-upload-controls">
+      <button type="button" mat-stroked-button (click)="fileInput.click()">
+        <mat-icon>add_photo_alternate</mat-icon>
+        Seleccionar imagen
+      </button>
+      <input
+        hidden
+        (change)="onFileSelected($event)"
+        #fileInput
+        type="file"
+        accept="image/*"
+      />
+
+      <button
+        *ngIf="imagePreview"
+        type="button"
+        mat-stroked-button
+        color="warn"
+        (click)="removeImage()"
+      >
+        <mat-icon>delete</mat-icon>
+        Eliminar imagen
+      </button>
+    </div>
+
+    <p class="helper-text" *ngIf="!imagePreview">
+      Selecciona una imagen JPG, PNG o GIF (máx. 2MB)
+    </p>
+  </div>
 
   <div class="form-actions">
-    <button type="button" mat-stroked-button (click)="onCancel()">Cancelar</button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="heroForm.invalid">
-      {{ isEditMode ? 'Actualizar' : 'Añadir' }}
+    <button type="button" mat-stroked-button (click)="onCancel()">
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="heroForm.invalid"
+    >
+      {{ isEditMode ? "Actualizar" : "Añadir" }}
     </button>
   </div>
 </form>
