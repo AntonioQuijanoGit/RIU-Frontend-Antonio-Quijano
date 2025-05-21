@@ -1,0 +1,54 @@
+<div *ngIf="hero" class="hero-detail-container">
+  <mat-card class="hero-detail-card">
+    <button mat-icon-button class="back-button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="hero-image-container" *ngIf="hero.imageUrl">
+      <img [src]="hero.imageUrl" [alt]="hero.name" class="hero-image" />
+    </div>
+    <div
+      class="hero-avatar"
+      *ngIf="!hero.imageUrl"
+      [style.background-color]="getHeroColor(hero)"
+    >
+      <div class="hero-initial">{{ hero.name.charAt(0) }}</div>
+    </div>
+
+    <div class="hero-info">
+      <h1 class="hero-name">{{ hero.name }}</h1>
+      <h2 class="hero-alter-ego" *ngIf="hero.alterEgo">{{ hero.alterEgo }}</h2>
+
+      <p class="publisher" *ngIf="hero.publisher">
+        <span class="publisher-tag">{{ hero.publisher }}</span>
+      </p>
+
+      <div class="powers-section" *ngIf="hero.powers && hero.powers.length > 0">
+        <h3>Poderes</h3>
+        <div class="powers-list">
+          <span class="powers-label">Poderes:</span>
+          <span class="powers-text"> {{ hero.powers.join(", ") }}</span>
+        </div>
+      </div>
+
+      <div class="description-section" *ngIf="hero.description">
+        <h3>Descripción</h3>
+        <p>{{ hero.description }}</p>
+      </div>
+
+      <div class="first-appearance" *ngIf="hero.firstAppearance">
+        <h3>Primera aparición</h3>
+        <p>{{ hero.firstAppearance | date : "longDate" }}</p>
+      </div>
+
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" (click)="editHero()">
+          <mat-icon>edit</mat-icon> Editar
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteHero()">
+          <mat-icon>delete</mat-icon> Eliminar
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</div>
