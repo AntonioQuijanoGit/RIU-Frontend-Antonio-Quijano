@@ -61,6 +61,8 @@
         *ngFor="let hero of displayedHeroes"
         class="hero-card"
         role="listitem"
+        (click)="viewHeroDetail(hero.id)"
+        style="cursor: pointer"
       >
         <div class="hero-image-container" *ngIf="hero.imageUrl">
           <img [src]="hero.imageUrl" [alt]="hero.name" class="hero-image" />
@@ -91,7 +93,7 @@
           <button
             mat-button
             color="primary"
-            (click)="editHero(hero)"
+            (click)="$event.stopPropagation(); editHero(hero)"
             class="edit-button"
           >
             <mat-icon>edit</mat-icon> Editar
@@ -100,7 +102,7 @@
           <button
             mat-button
             color="warn"
-            (click)="deleteHero(hero)"
+            (click)="$event.stopPropagation(); deleteHero(hero)"
             class="delete-button"
           >
             <mat-icon>delete</mat-icon> Eliminar
@@ -179,7 +181,7 @@
             <button
               mat-icon-button
               color="primary"
-              (click)="editHero(hero)"
+              (click)="$event.stopPropagation(); editHero(hero)"
               aria-label="Editar"
             >
               <mat-icon>edit</mat-icon>
@@ -187,7 +189,7 @@
             <button
               mat-icon-button
               color="warn"
-              (click)="deleteHero(hero)"
+              (click)="$event.stopPropagation(); deleteHero(hero)"
               aria-label="Eliminar"
             >
               <mat-icon>delete</mat-icon>
@@ -196,7 +198,12 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="viewHeroDetail(row.id)"
+          style="cursor: pointer"
+        ></tr>
       </table>
     </div>
   </section>

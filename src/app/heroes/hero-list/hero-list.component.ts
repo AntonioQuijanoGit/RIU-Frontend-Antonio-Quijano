@@ -15,6 +15,7 @@ import { HeroService } from '../../core/services/hero.service';
 import { Hero } from '../../core/models/hero.model';
 import { HeroFormComponent } from '../hero-form/hero-form.component';
 import { HeroDeleteDialogComponent } from '../hero-delete-dialog/hero-delete-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero-list',
@@ -61,7 +62,11 @@ export class HeroListComponent implements OnInit, OnDestroy {
     'actions',
   ];
 
-  constructor(private heroService: HeroService, private dialog: MatDialog) {}
+  constructor(
+    private heroService: HeroService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     // Get all heroes
@@ -196,5 +201,9 @@ export class HeroListComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  viewHeroDetail(heroId: number): void {
+    this.router.navigate(['/heroes', heroId]);
   }
 }
