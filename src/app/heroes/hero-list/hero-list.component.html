@@ -87,11 +87,22 @@
             <span class="powers-text">{{ hero.powers.join(", ") }}</span>
           </p>
         </mat-card-content>
-        <mat-card-actions>
-          <button mat-button color="primary" (click)="editHero(hero)">
+        <mat-card-actions class="card-actions">
+          <button
+            mat-button
+            color="primary"
+            (click)="editHero(hero)"
+            class="edit-button"
+          >
             <mat-icon>edit</mat-icon> Editar
           </button>
-          <button mat-button color="warn" (click)="deleteHero(hero)">
+          <span class="spacer"></span>
+          <button
+            mat-button
+            color="warn"
+            (click)="deleteHero(hero)"
+            class="delete-button"
+          >
             <mat-icon>delete</mat-icon> Eliminar
           </button>
         </mat-card-actions>

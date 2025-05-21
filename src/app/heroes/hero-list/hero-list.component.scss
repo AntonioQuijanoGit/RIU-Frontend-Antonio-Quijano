@@ -129,6 +129,25 @@ $transition-default: 0.25s ease;
     transform: translateY(-5px);
     box-shadow: $shadow-medium;
   }
+
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 8px 8px 8px;
+
+    .edit-button {
+      margin-right: auto; // Empuja el botón hacia la izquierda
+    }
+
+    .delete-button {
+      margin-left: auto; // Empuja el botón hacia la derecha
+    }
+
+    .spacer {
+      flex: 1;
+    }
+  }
 }
 
 // Nuevo componente: contenedor de imagen
