@@ -1,26 +1,119 @@
+// Variables para una paleta de colores consistente
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$text-primary: #333333;
+$text-secondary: #666666;
+$border-radius: 8px;
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
+$transition-default: 0.25s ease;
+
+// Estilos generales
 .hero-list-container {
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: $background-color;
+  min-height: 100vh;
+  color: $text-primary;
+}
 
-  h2 {
-    margin-bottom: 20px;
+// Encabezado
+.app-header {
+  margin-bottom: 30px;
+  text-align: center;
+
+  .app-title {
+    font-size: 32px;
+    color: $primary-color;
+    margin: 0;
+    padding: 20px 0;
+    font-weight: 500;
   }
 }
 
-.actions-container {
+// Panel de controles
+.controls-panel {
+  background-color: $card-background;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow-light;
+  margin-bottom: 25px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.search-container {
+  flex: 1;
 
   mat-form-field {
-    width: 50%;
+    width: 100%;
   }
 }
 
+.action-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+}
+
+.view-selector {
+  display: flex;
+  background-color: rgba($primary-color, 0.08);
+  border-radius: 24px;
+  padding: 3px;
+
+  button {
+    border-radius: 20px;
+    padding: 0 15px;
+
+    &.active {
+      background-color: $primary-color;
+      color: white;
+    }
+
+    .view-label {
+      margin-left: 6px;
+    }
+  }
+}
+
+.add-button {
+  padding: 0 16px;
+  height: 40px;
+}
+
+// Sección de héroes
+.heroes-section {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 18px;
+  color: $text-secondary;
+  margin-bottom: 15px;
+  font-weight: normal;
+}
+
+// Vista de grid (tarjetas)
 .heroes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
   margin-bottom: 20px;
 }
 
@@ -28,29 +121,128 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: $border-radius;
+  overflow: hidden;
+  transition: transform $transition-default, box-shadow $transition-default;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-medium;
+  }
 }
 
 .hero-avatar {
-  height: 150px;
-  background-color: #e0e0e0;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all $transition-default;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
 }
 
 .hero-initial {
   font-size: 72px;
   font-weight: bold;
-  color: #555;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-mat-card-content {
-  flex-grow: 1;
-  padding: 16px;
+.publisher-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
 }
 
-mat-card-actions {
+.powers-list {
+  font-size: 0.9rem;
+
+  .powers-label {
+    font-weight: 500;
+    margin-right: 6px;
+  }
+
+  .powers-text {
+    color: $text-secondary;
+  }
+}
+
+// Vista de lista (tabla)
+.heroes-table-container {
+  overflow: auto;
+  border-radius: $border-radius;
+  background-color: $card-background;
+}
+
+table {
+  width: 100%;
+}
+
+.hero-row-info {
   display: flex;
-  justify-content: space-between;
-  padding: 8px;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-mini-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+}
+
+.hero-name {
+  font-weight: 500;
+}
+
+.publisher-chip {
+  padding: 3px 8px;
+  border-radius: 16px;
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
+  font-size: 0.875rem;
+}
+
+.powers-cell {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+// Paginación
+.pagination-container {
+  background-color: $card-background;
+  border-radius: $border-radius;
+  box-shadow: $shadow-light;
+  overflow: hidden;
+}
+
+// Animaciones para mejorar la experiencia de usuario
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.heroes-grid,
+.heroes-table-container {
+  animation: fadeIn 0.4s ease-in-out;
 }

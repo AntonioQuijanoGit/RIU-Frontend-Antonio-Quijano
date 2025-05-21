@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HeroService } from '../../core/services/hero.service';
 import { Hero } from '../../core/models/hero.model';
@@ -27,6 +28,7 @@ import { Hero } from '../../core/models/hero.model';
     MatFormFieldModule,
     MatDialogModule,
     MatCardModule,
+    MatTooltipModule,
   ],
   templateUrl: './hero-list.component.html',
   styleUrls: ['./hero-list.component.scss'],
@@ -44,12 +46,16 @@ export class HeroListComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = [5, 10, 25];
   pageIndex = 0;
 
-  // Table columns (mantenemos esto por si queremos volver a la vista de tabla)
+  // View mode control
+  viewMode: 'grid' | 'list' = 'grid';
+
+  // Table columns
   displayedColumns: string[] = [
     'id',
     'name',
     'alterEgo',
     'publisher',
+    'powers',
     'actions',
   ];
 
@@ -69,6 +75,12 @@ export class HeroListComponent implements OnInit, OnDestroy {
         this.pageIndex = 0;
         this.applyFilter();
       });
+
+    // Recuperar modo de vista guardado
+    const savedViewMode = localStorage.getItem('heroViewMode');
+    if (savedViewMode === 'grid' || savedViewMode === 'list') {
+      this.viewMode = savedViewMode as 'grid' | 'list';
+    }
   }
 
   ngOnDestroy(): void {
@@ -105,6 +117,27 @@ export class HeroListComponent implements OnInit, OnDestroy {
     this.updateDisplayedHeroes();
   }
 
+  switchView(mode: 'grid' | 'list'): void {
+    this.viewMode = mode;
+    // Guardar preferencia
+    localStorage.setItem('heroViewMode', mode);
+  }
+
+  getHeroColor(hero: Hero): string {
+    // Colores predefinidos para editoriales conocidas
+    if (hero.publisher === 'DC Comics') return '#0476F2';
+    if (hero.publisher === 'Marvel Comics') return '#EC1D24';
+
+    // Para otros héroes, genera un color basado en el nombre
+    let hash = 0;
+    for (let i = 0; i < hero.name.length; i++) {
+      hash = hero.name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const hue = Math.abs(hash % 360);
+    return `hsl(${hue}, 70%, 60%)`;
+  }
+
   addHero(): void {
     // We'll implement this in the next phase
     console.log('Add hero clicked');
@@ -118,9 +151,5 @@ export class HeroListComponent implements OnInit, OnDestroy {
   deleteHero(hero: Hero): void {
     // We'll implement this in the next phase
     console.log('Delete hero clicked', hero);
-  }
-
-  handleImageError(event: any): void {
-    event.target.src = 'assets/placeholder.jpg';
   }
 }
