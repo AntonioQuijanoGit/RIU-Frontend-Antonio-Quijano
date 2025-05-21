@@ -213,10 +213,10 @@
 
   <div class="pagination-container">
     <mat-paginator
-      [length]="filteredHeroes.length"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="pageSizeOptions"
-      [pageIndex]="pageIndex"
+      [length]="paginationState.totalItems"
+      [pageSize]="paginationState.pageSize"
+      [pageSizeOptions]="paginationState.pageSizeOptions"
+      [pageIndex]="paginationState.pageIndex"
       (page)="onPageChange($event)"
       aria-label="Seleccionar página"
     >
