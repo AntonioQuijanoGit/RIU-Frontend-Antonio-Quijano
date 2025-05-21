@@ -160,11 +160,12 @@ $transition-default: 0.25s ease;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 20%;
     transition: transform $transition-default;
   }
 
   &:hover .hero-image {
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
 }
 
