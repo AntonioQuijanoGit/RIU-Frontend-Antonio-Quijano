@@ -21,6 +21,7 @@ import {
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { Hero } from '../../core/models/hero.model';
+import { UppercaseDirective } from '../../core/directives/uppercase.directive';
 
 @Component({
   selector: 'app-hero-form',
@@ -38,6 +39,7 @@ import { Hero } from '../../core/models/hero.model';
     MatDialogModule,
     MatChipsModule,
     MatIconModule,
+    UppercaseDirective,
   ],
   templateUrl: './hero-form.component.html',
   styleUrls: ['./hero-form.component.scss'],
