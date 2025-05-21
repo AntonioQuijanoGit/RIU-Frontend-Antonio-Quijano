@@ -1,9 +1,5 @@
 <div *ngIf="hero" class="hero-detail-container">
   <mat-card class="hero-detail-card">
-    <button mat-icon-button class="back-button" (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-
     <div class="hero-image-container" *ngIf="hero.imageUrl">
       <img [src]="hero.imageUrl" [alt]="hero.name" class="hero-image" />
     </div>
@@ -42,6 +38,14 @@
       </div>
 
       <div class="action-buttons">
+        <button
+          mat-raised-button
+          style="background-color: #3f51b5; color: white"
+          (click)="goBack()"
+        >
+          <mat-icon>arrow_back</mat-icon> Volver a la lista
+        </button>
+        <span class="spacer"></span>
         <button mat-raised-button color="primary" (click)="editHero()">
           <mat-icon>edit</mat-icon> Editar
         </button>
