@@ -54,9 +54,40 @@
   </div>
 
   <section class="heroes-section">
-    <h2 class="section-title">
-      {{ filteredHeroes.length }} superhéroes encontrados
-    </h2>
+    <div class="section-header">
+      <h2 class="section-title">
+        {{ filteredHeroes.length }} superhéroes encontrados
+      </h2>
+      <div class="filter-buttons">
+        <button
+          mat-stroked-button
+          color="primary"
+          [class.active]="publisherFilter === 'Marvel Comics'"
+          (click)="filterByPublisher('Marvel Comics')"
+          class="filter-button"
+        >
+          Marvel
+        </button>
+        <button
+          mat-stroked-button
+          color="primary"
+          [class.active]="publisherFilter === 'DC Comics'"
+          (click)="filterByPublisher('DC Comics')"
+          class="filter-button"
+        >
+          DC Comics
+        </button>
+        <button
+          *ngIf="publisherFilter"
+          mat-stroked-button
+          (click)="clearPublisherFilter()"
+          class="clear-filter-button"
+        >
+          <mat-icon>close</mat-icon>
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
 
     <!-- Vista de grid (tarjetas) -->
     <div *ngIf="viewMode === 'grid'" class="heroes-grid" role="list">

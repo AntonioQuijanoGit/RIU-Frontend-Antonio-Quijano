@@ -44,7 +44,15 @@ export class HeroListComponent implements OnInit, OnDestroy {
   heroes: Hero[] = [];
   filteredHeroes: Hero[] = [];
   displayedHeroes: Hero[] = [];
-  paginationState!: PageState;
+  paginationState: PageState = {
+    pageIndex: 0,
+    pageSize: 5,
+    pageSizeOptions: [5, 10, 25],
+    totalItems: 0,
+  };
+
+  // Añadir esta propiedad para controlar el filtro activo
+  publisherFilter: string | null = null;
 
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
@@ -122,17 +130,45 @@ export class HeroListComponent implements OnInit, OnDestroy {
   applyFilter(): void {
     const filterValue = this.searchControl.value?.toLowerCase() || '';
 
+    // Aplicar filtro por nombre primero
+    let filtered = this.heroes;
     if (filterValue) {
-      this.filteredHeroes = this.heroes.filter((hero) =>
+      filtered = filtered.filter((hero) =>
         hero.name.toLowerCase().includes(filterValue)
       );
-    } else {
-      this.filteredHeroes = [...this.heroes];
     }
+
+    // Aplicar filtro por editorial si está activo
+    if (this.publisherFilter) {
+      filtered = filtered.filter(
+        (hero) => hero.publisher === this.publisherFilter
+      );
+    }
+
+    this.filteredHeroes = filtered;
 
     // Actualizar el total de elementos en el servicio de paginación
     this.paginationService.setTotalItems(this.filteredHeroes.length);
     this.updateDisplayedHeroes();
+  }
+
+  // Añadir estos dos nuevos métodos para manejar el filtro de editorial
+  filterByPublisher(publisher: string): void {
+    // Si ya está seleccionado el mismo publisher, lo deseleccionamos
+    if (this.publisherFilter === publisher) {
+      this.publisherFilter = null;
+    } else {
+      this.publisherFilter = publisher;
+    }
+
+    // Regresar a la primera página cuando cambiamos el filtro
+    this.paginationService.resetToFirstPage();
+    this.applyFilter();
+  }
+
+  clearPublisherFilter(): void {
+    this.publisherFilter = null;
+    this.applyFilter();
   }
 
   updateDisplayedHeroes(): void {
