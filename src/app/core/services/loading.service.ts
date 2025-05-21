@@ -19,7 +19,7 @@ export class LoadingService {
 
     this.timeoutId = setTimeout(() => {
       this.hide();
-    }, 3000);
+    }, 2000);
   }
 
   hide(): void {
