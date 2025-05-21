@@ -62,7 +62,14 @@
         class="hero-card"
         role="listitem"
       >
-        <div class="hero-avatar" [style.background-color]="getHeroColor(hero)">
+        <div class="hero-image-container" *ngIf="hero.imageUrl">
+          <img [src]="hero.imageUrl" [alt]="hero.name" class="hero-image" />
+        </div>
+        <div
+          class="hero-avatar"
+          [style.background-color]="getHeroColor(hero)"
+          *ngIf="!hero.imageUrl"
+        >
           <div class="hero-initial">{{ hero.name.charAt(0) }}</div>
         </div>
         <mat-card-header>
@@ -115,8 +122,12 @@
               <div
                 class="hero-mini-avatar"
                 [style.background-color]="getHeroColor(hero)"
+                [style.background-image]="
+                  hero.imageUrl ? 'url(' + hero.imageUrl + ')' : 'none'
+                "
+                [style.background-size]="hero.imageUrl ? 'cover' : 'auto'"
               >
-                {{ hero.name.charAt(0) }}
+                <span *ngIf="!hero.imageUrl">{{ hero.name.charAt(0) }}</span>
               </div>
               <span class="hero-name">{{ hero.name }}</span>
             </div>
