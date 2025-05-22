@@ -95,16 +95,13 @@ export class HeroDetailComponent implements OnInit {
   }
 
   getHeroColor(heroToUse?: Hero): string {
-    // Si no se pasa un héroe específico, usar el héroe actual
     const hero = heroToUse || this.hero;
 
     if (!hero) return '#777777';
 
-    // Colores predefinidos para editoriales conocidas
     if (hero.publisher === 'DC Comics') return '#0476F2';
     if (hero.publisher === 'Marvel Comics') return '#EC1D24';
 
-    // Para otros héroes, genera un color basado en el nombre
     let hash = 0;
     for (let i = 0; i < hero.name.length; i++) {
       hash = hero.name.charCodeAt(i) + ((hash << 5) - hash);

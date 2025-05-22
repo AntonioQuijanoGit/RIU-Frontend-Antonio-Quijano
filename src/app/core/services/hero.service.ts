@@ -8,6 +8,7 @@ import { LoadingService } from './loading.service';
   providedIn: 'root',
 })
 export class HeroService {
+  // mock data for heroes
   private heroes: Hero[] = [
     {
       id: 1,
@@ -169,6 +170,7 @@ export class HeroService {
 
   constructor(private loadingService: LoadingService) {}
 
+  // get all heroes
   getHeroes(): Observable<Hero[]> {
     this.loadingService.show();
     return this.heroesSubject.asObservable().pipe(
@@ -177,6 +179,7 @@ export class HeroService {
     );
   }
 
+  // find hero by id
   getHeroById(id: number): Observable<Hero | undefined> {
     this.loadingService.show();
     return this.heroesSubject.pipe(
@@ -198,6 +201,7 @@ export class HeroService {
     );
   }
 
+  // add new hero
   addHero(hero: Omit<Hero, 'id'>): Observable<Hero> {
     this.loadingService.show();
 
@@ -213,6 +217,7 @@ export class HeroService {
     );
   }
 
+  // update existing hero
   updateHero(updatedHero: Hero): Observable<Hero> {
     this.loadingService.show();
 
@@ -228,6 +233,7 @@ export class HeroService {
     );
   }
 
+  // delete hero
   deleteHero(id: number): Observable<boolean> {
     this.loadingService.show();
 

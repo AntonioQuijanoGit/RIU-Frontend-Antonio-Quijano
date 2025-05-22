@@ -8,7 +8,7 @@
 .dialog-title {
   text-align: center;
   margin-bottom: 20px;
-  padding-top: 16px; // Añadir padding vertical
+  padding-top: 16px;
 }
 
 .full-width {
@@ -39,7 +39,7 @@
 
 .powers-input-container {
   display: flex;
-  align-items: flex-start; // Alineación superior para corregir
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 10px;
 
@@ -48,9 +48,8 @@
     margin-bottom: 0;
   }
 
-  // Ajuste específico para el botón de añadir
   button[mat-mini-fab] {
-    margin-top: 10px; // Ajusta este valor para alinear con el campo de texto
+    margin-top: 10px;
   }
 }
 
@@ -58,16 +57,14 @@
   margin-top: 10px;
 }
 
-// Eliminar hover en íconos de campos
 .clickable-field {
   ::ng-deep .mat-form-field-suffix {
     .mat-icon-button {
-      pointer-events: none; // Desactiva eventos del ratón en los íconos
+      pointer-events: none;
     }
   }
 }
 
-// Estilos para la sección de carga de imágenes
 .image-upload-section {
   margin-bottom: 20px;
   border: 1px solid rgba(0, 0, 0, 0.12);

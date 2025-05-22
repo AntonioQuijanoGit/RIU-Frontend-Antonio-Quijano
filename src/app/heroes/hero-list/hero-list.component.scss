@@ -1,4 +1,3 @@
-// Variables para una paleta de colores consistente
 $primary-color: #3f51b5;
 $accent-color: #ff4081;
 $background-color: #f8f9fa;
@@ -10,7 +9,6 @@ $shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
 $shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
 $transition-default: 0.25s ease;
 
-// Estilos generales
 .hero-list-container {
   padding: 20px;
   max-width: 1200px;
@@ -20,7 +18,6 @@ $transition-default: 0.25s ease;
   color: $text-primary;
 }
 
-// Encabezado (VERSIÓN MEJORADA CON ESTILO MÁS ELEGANTE)
 .app-header {
   margin-bottom: 30px;
   text-align: center;
@@ -37,10 +34,10 @@ $transition-default: 0.25s ease;
   color: white;
   margin: 0;
   font-size: 28px;
-  font-weight: 400; // Más ligero
-  letter-spacing: 1.5px; // Mayor espaciado entre letras
+  font-weight: 400;
+  letter-spacing: 1.5px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-  font-family: "Roboto", "Segoe UI", sans-serif; // Fuente más elegante
+  font-family: "Roboto", "Segoe UI", sans-serif;
 
   .title-icon {
     font-size: 32px;
@@ -68,7 +65,6 @@ $transition-default: 0.25s ease;
   }
 }
 
-// Panel de controles
 .controls-panel {
   background-color: $card-background;
   border-radius: $border-radius;
@@ -105,7 +101,6 @@ $transition-default: 0.25s ease;
   }
 }
 
-// Selector de vistas más sutil
 .view-selector {
   display: flex;
   background-color: rgba($primary-color, 0.05);
@@ -128,7 +123,6 @@ $transition-default: 0.25s ease;
   }
 }
 
-// Modificar el botón de añadir (inversión de colores)
 .add-button {
   padding: 0 16px;
   height: 40px;
@@ -136,12 +130,10 @@ $transition-default: 0.25s ease;
   color: white;
 }
 
-// Sección de héroes
 .heroes-section {
   margin-bottom: 25px;
 }
 
-// Vista de grid (tarjetas)
 .heroes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -162,7 +154,6 @@ $transition-default: 0.25s ease;
     box-shadow: $shadow-medium;
   }
 
-  // Invertir colores del nombre y alter ego
   mat-card-header {
     mat-card-title {
       font-size: 1.25rem;
@@ -177,7 +168,6 @@ $transition-default: 0.25s ease;
     }
   }
 
-  // Ajustar pesos visuales en la lista de poderes
   .powers-list {
     .powers-label {
       font-weight: normal;
@@ -191,7 +181,6 @@ $transition-default: 0.25s ease;
     }
   }
 
-  // Estilos para los botones de acción
   .card-actions {
     display: flex;
     justify-content: space-between;
@@ -199,11 +188,11 @@ $transition-default: 0.25s ease;
     padding: 8px 8px 8px 8px;
 
     .edit-button {
-      margin-right: auto; // Empuja el botón hacia la izquierda
+      margin-right: auto;
     }
 
     .delete-button {
-      margin-left: auto; // Empuja el botón hacia la derecha
+      margin-left: auto;
     }
 
     .spacer {
@@ -212,7 +201,6 @@ $transition-default: 0.25s ease;
   }
 }
 
-// Nuevo componente: contenedor de imagen
 .hero-image-container {
   height: 200px;
   overflow: hidden;
@@ -260,14 +248,12 @@ $transition-default: 0.25s ease;
   margin-bottom: 8px;
 }
 
-// Vista de lista (tabla)
 .heroes-table-container {
   overflow: auto;
   border-radius: $border-radius;
   background-color: $card-background;
 }
 
-// Líneas divisorias más suaves en la tabla
 .heroes-table {
   width: 100%;
 
@@ -301,7 +287,6 @@ $transition-default: 0.25s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
   span {
-    // Solo mostrar la inicial cuando no hay imagen
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 }
@@ -329,7 +314,6 @@ $transition-default: 0.25s ease;
   white-space: nowrap;
 }
 
-// Paginación (versión original)
 .pagination-container {
   background-color: $card-background;
   border-radius: $border-radius;
@@ -337,7 +321,6 @@ $transition-default: 0.25s ease;
   overflow: hidden;
 }
 
-// Animaciones para mejorar la experiencia de usuario
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -352,9 +335,6 @@ $transition-default: 0.25s ease;
   animation: fadeIn 0.4s ease-in-out;
 }
 
-// NUEVOS ESTILOS PARA LOS FILTROS DE EDITORIAL - SIN ICONOS
-
-// Encabezado de sección con filtros
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -364,7 +344,6 @@ $transition-default: 0.25s ease;
   gap: 15px;
 }
 
-// Modificar el estilo de título de sección existente
 .section-title {
   font-size: 18px;
   color: $text-secondary;
@@ -397,7 +376,6 @@ $transition-default: 0.25s ease;
   border-radius: 20px;
 }
 
-// Animación para el botón activo
 .filter-button.active {
   position: relative;
 
@@ -413,7 +391,6 @@ $transition-default: 0.25s ease;
   }
 }
 
-// Responsividad para los filtros
 @media (max-width: 600px) {
   .section-header {
     flex-direction: column;

@@ -18,7 +18,7 @@ export interface PageEvent {
   providedIn: 'root',
 })
 export class PaginationService {
-  // Estado inicial de paginación
+  // default pagination settings
   private defaultState: PageState = {
     pageIndex: 0,
     pageSize: 5,
@@ -26,17 +26,16 @@ export class PaginationService {
     totalItems: 0,
   };
 
-  // BehaviorSubject para controlar el estado
   private stateSubject = new BehaviorSubject<PageState>(this.defaultState);
 
   constructor() {}
 
-  // Obtener el estado como Observable
+  // get current pagination state
   getState(): Observable<PageState> {
     return this.stateSubject.asObservable();
   }
 
-  // Actualizar el estado (al cambiar de página)
+  // handle page change event
   onPageChange(event: PageEvent): void {
     const currentState = this.stateSubject.value;
     this.stateSubject.next({
@@ -47,7 +46,6 @@ export class PaginationService {
     });
   }
 
-  // Actualizar el estado (manualmente)
   updateState(newState: Partial<PageState>): void {
     const currentState = this.stateSubject.value;
     this.stateSubject.next({
@@ -56,7 +54,6 @@ export class PaginationService {
     });
   }
 
-  // Resetear a la primera página
   resetToFirstPage(): void {
     const currentState = this.stateSubject.value;
     this.stateSubject.next({
@@ -65,14 +62,13 @@ export class PaginationService {
     });
   }
 
-  // Paginar un array de elementos
+  // get items for current page
   getPagedItems<T>(items: T[]): T[] {
     const { pageIndex, pageSize } = this.stateSubject.value;
     const startIndex = pageIndex * pageSize;
     return items.slice(startIndex, startIndex + pageSize);
   }
 
-  // Establecer el número total de elementos
   setTotalItems(count: number): void {
     const currentState = this.stateSubject.value;
     this.stateSubject.next({
@@ -81,7 +77,6 @@ export class PaginationService {
     });
   }
 
-  // Inicializar con una configuración personalizada
   initialize(config?: Partial<PageState>): void {
     if (config) {
       this.stateSubject.next({
