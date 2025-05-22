@@ -1,112 +1,215 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { take } from 'rxjs/operators';
 import { HeroService } from './hero.service';
+import { LoadingService } from './loading.service';
 import { Hero } from '../models/hero.model';
 
 describe('HeroService', () => {
   let service: HeroService;
+  let loadingServiceSpy: jasmine.SpyObj<LoadingService>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    const spy = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
+
+    TestBed.configureTestingModule({
+      providers: [HeroService, { provide: LoadingService, useValue: spy }],
+    });
+
     service = TestBed.inject(HeroService);
+    loadingServiceSpy = TestBed.inject(
+      LoadingService
+    ) as jasmine.SpyObj<LoadingService>;
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return all heroes', (done) => {
-    service.getHeroes().subscribe((heroes) => {
-      expect(heroes.length).toBeGreaterThan(0);
-      done();
-    });
-  });
+  describe('getHeroes', () => {
+    it('should return all heroes', fakeAsync(() => {
+      let result: Hero[] = [];
 
-  it('should find a hero by id', (done) => {
-    service.getHeroById(1).subscribe((hero) => {
-      expect(hero).toBeTruthy();
-      expect(hero?.id).toBe(1);
-      done();
-    });
-  });
-
-  it('should return undefined for non-existent hero id', (done) => {
-    service.getHeroById(999).subscribe((hero) => {
-      expect(hero).toBeUndefined();
-      done();
-    });
-  });
-
-  it('should find heroes by name', (done) => {
-    service.findHeroesByName('man').subscribe((heroes) => {
-      expect(heroes.length).toBeGreaterThan(0);
-      heroes.forEach((hero) => {
-        expect(hero.name.toLowerCase()).toContain('man');
-      });
-      done();
-    });
-  });
-
-  it('should add a new hero', (done) => {
-    const newHero: Omit<Hero, 'id'> = {
-      name: 'Test Hero',
-      powers: ['Testing'],
-      alterEgo: 'Test Alter Ego',
-      description: 'Test Description',
-    };
-
-    service.addHero(newHero).subscribe((hero) => {
-      expect(hero.id).toBeTruthy();
-      expect(hero.name).toBe('Test Hero');
-
-      // Verify the hero was added to the list
-      service.getHeroes().subscribe((heroes) => {
-        const found = heroes.find((h) => h.name === 'Test Hero');
-        expect(found).toBeTruthy();
-        done();
-      });
-    });
-  });
-
-  it('should update an existing hero', (done) => {
-    // First get a hero to update
-    service.getHeroById(1).subscribe((hero) => {
-      if (hero) {
-        const updatedHero: Hero = {
-          ...hero,
-          name: 'Updated Hero Name',
-        };
-
-        service.updateHero(updatedHero).subscribe((result) => {
-          expect(result.name).toBe('Updated Hero Name');
-
-          // Verify the hero was updated in the list
-          service.getHeroById(1).subscribe((updatedResult) => {
-            expect(updatedResult?.name).toBe('Updated Hero Name');
-            done();
-          });
+      service
+        .getHeroes()
+        .pipe(take(1))
+        .subscribe((heroes) => {
+          result = heroes;
         });
-      } else {
-        fail('Hero with id 1 not found');
-      }
-    });
+
+      expect(loadingServiceSpy.show).toHaveBeenCalled();
+
+      expect(result.length).toBe(0);
+
+      // After delay completes
+      tick(850);
+
+      expect(result.length).toBe(15);
+      expect(result[0].name).toBe('Superman');
+      expect(loadingServiceSpy.hide).toHaveBeenCalled();
+    }));
   });
 
-  it('should delete a hero', (done) => {
-    // First get the initial count
-    service.getHeroes().subscribe((initialHeroes) => {
-      const initialCount = initialHeroes.length;
+  describe('getHeroById', () => {
+    it('should return hero when id exists', fakeAsync(() => {
+      let result: Hero | undefined;
+      service
+        .getHeroById(1)
+        .pipe(take(1))
+        .subscribe((hero) => {
+          result = hero;
+        });
 
+      tick(850);
+
+      expect(result).toBeDefined();
+      expect(result?.name).toBe('Superman');
+      expect(result?.id).toBe(1);
+    }));
+
+    it('should return undefined when id does not exist', fakeAsync(() => {
+      let result: Hero | undefined;
+      service
+        .getHeroById(999)
+        .pipe(take(1))
+        .subscribe((hero) => {
+          result = hero;
+        });
+
+      tick(850);
+
+      expect(result).toBeUndefined();
+    }));
+  });
+
+  describe('findHeroesByName', () => {
+    it('should return heroes matching search term', fakeAsync(() => {
+      let result: Hero[] = [];
+      service
+        .findHeroesByName('man')
+        .pipe(take(1))
+        .subscribe((heroes) => {
+          result = heroes;
+        });
+
+      tick(850);
+
+      expect(result.length).toBe(6); // Heroes with 'man' in name
+      expect(
+        result.every((hero) => hero.name.toLowerCase().includes('man'))
+      ).toBe(true);
+    }));
+
+    it('should return empty array when no matches', fakeAsync(() => {
+      let result: Hero[] = [];
+      service
+        .findHeroesByName('nonexistent')
+        .pipe(take(1))
+        .subscribe((heroes) => {
+          result = heroes;
+        });
+
+      tick(850);
+
+      expect(result.length).toBe(0);
+    }));
+
+    it('should be case insensitive', fakeAsync(() => {
+      let result: Hero[] = [];
+      service
+        .findHeroesByName('BATMAN')
+        .pipe(take(1))
+        .subscribe((heroes) => {
+          result = heroes;
+        });
+
+      tick(850);
+
+      expect(result.length).toBe(1);
+      expect(result[0].name).toBe('Batman');
+    }));
+  });
+
+  describe('addHero', () => {
+    it('should add new hero with auto-generated id', fakeAsync(() => {
+      const newHero: Omit<Hero, 'id'> = {
+        name: 'Test Hero',
+        alterEgo: 'Test Alter',
+        powers: ['Test Power'],
+        publisher: 'Test Publisher',
+        firstAppearance: new Date(),
+        description: 'Test Description',
+        imageUrl: 'test.jpg',
+      };
+
+      let result: Hero | undefined;
+      let completed = false;
+
+      service.addHero(newHero).subscribe({
+        next: (hero) => {
+          result = hero;
+        },
+        complete: () => {
+          completed = true;
+        },
+      });
+
+      expect(loadingServiceSpy.show).toHaveBeenCalled();
+
+      tick(1100);
+
+      expect(result?.id).toBe(16);
+      expect(result?.name).toBe('Test Hero');
+      expect(completed).toBe(true);
+      expect(loadingServiceSpy.hide).toHaveBeenCalled();
+    }));
+  });
+
+  describe('updateHero', () => {
+    it('should update existing hero', fakeAsync(() => {
+      const updatedHero: Hero = {
+        id: 1,
+        name: 'Updated Superman',
+        alterEgo: 'Clark Kent',
+        powers: ['Updated Powers'],
+        publisher: 'DC Comics',
+        firstAppearance: new Date(),
+        description: 'Updated Description',
+        imageUrl: 'updated.jpg',
+      };
+
+      let result: Hero | undefined;
+      service.updateHero(updatedHero).subscribe((hero) => {
+        result = hero;
+      });
+
+      tick(1100);
+
+      expect(result?.name).toBe('Updated Superman');
+      expect(result?.id).toBe(1);
+    }));
+  });
+
+  describe('deleteHero', () => {
+    it('should delete existing hero and return true', fakeAsync(() => {
+      let result: boolean | undefined;
       service.deleteHero(1).subscribe((success) => {
-        expect(success).toBeTrue();
-
-        // Verify the hero was removed from the list
-        service.getHeroes().subscribe((updatedHeroes) => {
-          expect(updatedHeroes.length).toBe(initialCount - 1);
-          const deletedHero = updatedHeroes.find((h) => h.id === 1);
-          expect(deletedHero).toBeUndefined();
-          done();
-        });
+        result = success;
       });
-    });
+
+      tick(1100);
+
+      expect(result).toBe(true);
+    }));
+
+    it('should return false when hero does not exist', fakeAsync(() => {
+      let result: boolean | undefined;
+      service.deleteHero(999).subscribe((success) => {
+        result = success;
+      });
+
+      tick(1100);
+
+      expect(result).toBe(false);
+    }));
   });
 });

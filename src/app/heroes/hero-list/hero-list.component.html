@@ -1,4 +1,5 @@
 <div class="hero-list-container">
+  <!-- header with title -->
   <header class="app-header">
     <h1 class="app-title">
       <mat-icon class="title-icon">stars</mat-icon>
@@ -6,6 +7,7 @@
     </h1>
   </header>
 
+  <!-- search and controls -->
   <div class="controls-panel">
     <div class="search-container">
       <mat-form-field appearance="outline" color="primary">
@@ -20,6 +22,7 @@
     </div>
 
     <div class="action-controls">
+      <!-- view mode toggle -->
       <div class="view-selector" aria-label="Seleccionar modo de visualización">
         <button
           mat-button
@@ -41,6 +44,7 @@
         </button>
       </div>
 
+      <!-- add button -->
       <button
         mat-raised-button
         style="background-color: #3f51b5; color: white"
@@ -58,6 +62,7 @@
       <h2 class="section-title">
         {{ filteredHeroes.length }} superhéroes encontrados
       </h2>
+      <!-- publisher filters -->
       <div class="filter-buttons">
         <button
           mat-stroked-button
@@ -89,7 +94,7 @@
       </div>
     </div>
 
-    <!-- Vista de grid (tarjetas) -->
+    <!-- grid view (cards) -->
     <div *ngIf="viewMode === 'grid'" class="heroes-grid" role="list">
       <mat-card
         *ngFor="let hero of displayedHeroes"
@@ -145,7 +150,7 @@
       </mat-card>
     </div>
 
-    <!-- Vista de lista (tabla) -->
+    <!-- table view -->
     <div
       *ngIf="viewMode === 'list'"
       class="heroes-table-container mat-elevation-z2"
@@ -156,13 +161,13 @@
         class="heroes-table"
         aria-label="Lista de superhéroes"
       >
-        <!-- Columna ID -->
+        <!-- ID column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef scope="col">ID</th>
           <td mat-cell *matCellDef="let hero">{{ hero.id }}</td>
         </ng-container>
 
-        <!-- Columna Nombre -->
+        <!-- Name column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef scope="col">Nombre</th>
           <td mat-cell *matCellDef="let hero">
@@ -183,13 +188,11 @@
           </td>
         </ng-container>
 
-        <!-- Columna Alter Ego -->
         <ng-container matColumnDef="alterEgo">
           <th mat-header-cell *matHeaderCellDef scope="col">Alter Ego</th>
           <td mat-cell *matCellDef="let hero">{{ hero.alterEgo || "-" }}</td>
         </ng-container>
 
-        <!-- Columna Editorial -->
         <ng-container matColumnDef="publisher">
           <th mat-header-cell *matHeaderCellDef scope="col">Editorial</th>
           <td mat-cell *matCellDef="let hero">
@@ -200,7 +203,6 @@
           </td>
         </ng-container>
 
-        <!-- Columna Poderes -->
         <ng-container matColumnDef="powers">
           <th mat-header-cell *matHeaderCellDef scope="col">Poderes</th>
           <td mat-cell *matCellDef="let hero" class="powers-cell">
@@ -208,7 +210,7 @@
           </td>
         </ng-container>
 
-        <!-- Columna Acciones -->
+        <!-- Actions column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef scope="col">Acciones</th>
           <td mat-cell *matCellDef="let hero" class="actions-cell">
@@ -242,6 +244,7 @@
     </div>
   </section>
 
+  <!-- pagination -->
   <div class="pagination-container">
     <mat-paginator
       [length]="paginationState.totalItems"
@@ -253,4 +256,4 @@
     >
     </mat-paginator>
   </div>
-</div>
+ </div>

@@ -51,7 +51,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
     totalItems: 0,
   };
 
-  // Añadir esta propiedad para controlar el filtro activo
+  // Add
   publisherFilter: string | null = null;
 
   searchControl = new FormControl('');
@@ -79,7 +79,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Inicializar el servicio de paginación
+    // Initialize
     this.paginationService.initialize({
       pageSize: 5,
       pageSizeOptions: [5, 10, 25],
@@ -87,7 +87,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
       totalItems: 0,
     });
 
-    // Suscribirse a cambios en el estado de paginación
+    // Suscribe
     this.paginationSubscription = this.paginationService
       .getState()
       .subscribe((state) => {
@@ -111,7 +111,6 @@ export class HeroListComponent implements OnInit, OnDestroy {
         this.applyFilter();
       });
 
-    // Recuperar modo de vista guardado
     const savedViewMode = localStorage.getItem('heroViewMode');
     if (savedViewMode === 'grid' || savedViewMode === 'list') {
       this.viewMode = savedViewMode as 'grid' | 'list';
@@ -130,7 +129,6 @@ export class HeroListComponent implements OnInit, OnDestroy {
   applyFilter(): void {
     const filterValue = this.searchControl.value?.toLowerCase() || '';
 
-    // Aplicar filtro por nombre primero
     let filtered = this.heroes;
     if (filterValue) {
       filtered = filtered.filter((hero) =>
@@ -138,7 +136,6 @@ export class HeroListComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Aplicar filtro por editorial si está activo
     if (this.publisherFilter) {
       filtered = filtered.filter(
         (hero) => hero.publisher === this.publisherFilter
@@ -147,21 +144,19 @@ export class HeroListComponent implements OnInit, OnDestroy {
 
     this.filteredHeroes = filtered;
 
-    // Actualizar el total de elementos en el servicio de paginación
+    // Update
     this.paginationService.setTotalItems(this.filteredHeroes.length);
     this.updateDisplayedHeroes();
   }
 
-  // Añadir estos dos nuevos métodos para manejar el filtro de editorial
   filterByPublisher(publisher: string): void {
-    // Si ya está seleccionado el mismo publisher, lo deseleccionamos
     if (this.publisherFilter === publisher) {
       this.publisherFilter = null;
     } else {
       this.publisherFilter = publisher;
     }
 
-    // Regresar a la primera página cuando cambiamos el filtro
+    // Regret
     this.paginationService.resetToFirstPage();
     this.applyFilter();
   }
@@ -172,29 +167,27 @@ export class HeroListComponent implements OnInit, OnDestroy {
   }
 
   updateDisplayedHeroes(): void {
-    // Usar el servicio para obtener los elementos paginados
     this.displayedHeroes = this.paginationService.getPagedItems(
       this.filteredHeroes
     );
   }
 
   onPageChange(event: PageEvent): void {
-    // Delegar al servicio
     this.paginationService.onPageChange(event);
   }
 
   switchView(mode: 'grid' | 'list'): void {
     this.viewMode = mode;
-    // Guardar preferencia
+    // Save
     localStorage.setItem('heroViewMode', mode);
   }
 
   getHeroColor(hero: Hero): string {
-    // Colores predefinidos para editoriales conocidas
+    // Colors
     if (hero.publisher === 'DC Comics') return '#0476F2';
     if (hero.publisher === 'Marvel Comics') return '#EC1D24';
 
-    // Para otros héroes, genera un color basado en el nombre
+    // Another hero
     let hash = 0;
     for (let i = 0; i < hero.name.length; i++) {
       hash = hero.name.charCodeAt(i) + ((hash << 5) - hash);
@@ -212,7 +205,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.heroService.addHero(result).subscribe((newHero) => {
-          // Actualiza la lista de héroes
+          // Update list
           this.heroService.getHeroes().subscribe((heroes) => {
             this.heroes = heroes;
             this.applyFilter();
@@ -231,7 +224,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.heroService.updateHero(result).subscribe((updatedHero) => {
-          // Actualiza la lista de héroes
+          // Update list
           this.heroService.getHeroes().subscribe((heroes) => {
             this.heroes = heroes;
             this.applyFilter();

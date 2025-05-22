@@ -10,6 +10,7 @@ export class LoadingService {
 
   public isLoading$: Observable<boolean> = this.isLoadingSubject.asObservable();
 
+  // show loading spinner
   show(): void {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
@@ -17,11 +18,13 @@ export class LoadingService {
 
     this.isLoadingSubject.next(true);
 
+    // auto hide after 2 seconds
     this.timeoutId = setTimeout(() => {
       this.hide();
     }, 2000);
   }
 
+  // hide loading spinner
   hide(): void {
     this.isLoadingSubject.next(false);
 

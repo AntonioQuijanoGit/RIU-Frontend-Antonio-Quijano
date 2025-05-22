@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SpinnerComponent } from './spinner.component';
+import { SpinnerComponent } from '../../heroes/spinner/spinner.component';
 import { LoadingService } from '../../core/services/loading.service';
 import { of } from 'rxjs';
 
@@ -9,9 +9,13 @@ describe('SpinnerComponent', () => {
   let mockLoadingService: jasmine.SpyObj<LoadingService>;
 
   beforeEach(async () => {
-    const loadingServiceSpy = jasmine.createSpyObj('LoadingService', [], {
-      isLoading$: of(false),
-    });
+    const loadingServiceSpy = jasmine.createSpyObj(
+      'LoadingService',
+      ['show', 'hide'],
+      {
+        isLoading$: of(false),
+      }
+    );
 
     await TestBed.configureTestingModule({
       imports: [SpinnerComponent],

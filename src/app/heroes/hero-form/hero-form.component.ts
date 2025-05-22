@@ -58,7 +58,6 @@ export class HeroFormComponent implements OnInit {
   powers: string[] = [];
   newPower = '';
 
-  // Nuevas propiedades para la gestión de imágenes
   selectedFile: File | null = null;
   imagePreview: string | null = null;
   maxFileSizeMB = 2;
@@ -78,7 +77,6 @@ export class HeroFormComponent implements OnInit {
       this.heroForm.patchValue(this.data.hero);
       this.powers = [...this.data.hero.powers];
 
-      // Si hay una URL de imagen, mostrarla en la vista previa
       if (this.data.hero.imageUrl) {
         this.imagePreview = this.data.hero.imageUrl;
       }
@@ -93,18 +91,16 @@ export class HeroFormComponent implements OnInit {
       publisher: [''],
       firstAppearance: [null],
       description: [''],
-      imageUrl: [''], // Mantenemos este campo para compatibilidad
+      imageUrl: [''],
     });
   }
 
-  // Método para manejar la selección de archivos
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Verificar tamaño máximo (2MB)
       if (file.size > this.maxFileSizeMB * 1024 * 1024) {
         alert(
           `El archivo es demasiado grande. El tamaño máximo es ${this.maxFileSizeMB}MB.`
@@ -112,7 +108,6 @@ export class HeroFormComponent implements OnInit {
         return;
       }
 
-      // Verificar tipo de archivo (solo imágenes)
       if (!file.type.startsWith('image/')) {
         alert('Solo se permiten archivos de imagen.');
         return;
@@ -120,7 +115,6 @@ export class HeroFormComponent implements OnInit {
 
       this.selectedFile = file;
 
-      // Crear una URL para la vista previa
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
@@ -129,7 +123,6 @@ export class HeroFormComponent implements OnInit {
     }
   }
 
-  // Método para eliminar la imagen seleccionada
   removeImage(): void {
     this.selectedFile = null;
     this.imagePreview = null;
@@ -155,7 +148,6 @@ export class HeroFormComponent implements OnInit {
       const heroData = this.heroForm.value;
       heroData.powers = this.powers;
 
-      // Si hay una imagen seleccionada, usar su URL
       if (this.imagePreview) {
         heroData.imageUrl = this.imagePreview;
       }
