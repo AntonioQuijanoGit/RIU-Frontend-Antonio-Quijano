@@ -18,7 +18,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1938, 3, 18),
       description: 'El Hombre de Acero',
-      imageUrl: 'assets/images/superman.jpg',
+      imageUrl: 'images/superman.jpg',
     },
     {
       id: 2,
@@ -28,7 +28,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1939, 4, 1),
       description: 'El Caballero Oscuro',
-      imageUrl: 'assets/images/batman.jpg',
+      imageUrl: 'images/batman.jpg',
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1962, 7, 10),
       description: 'El Hombre Araña',
-      imageUrl: 'assets/images/spiderman.jpg',
+      imageUrl: 'images/spiderman.jpg',
     },
     {
       id: 4,
@@ -48,7 +48,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1941, 9, 21),
       description: 'La Mujer Maravilla',
-      imageUrl: 'assets/images/wonderwoman.jpg',
+      imageUrl: 'images/wonderwoman.jpg',
     },
     {
       id: 5,
@@ -58,7 +58,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1963, 2, 1),
       description: 'El Hombre de Hierro',
-      imageUrl: 'assets/images/ironman.jpg',
+      imageUrl: 'images/ironman.jpg',
     },
     {
       id: 6,
@@ -68,7 +68,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1962, 4, 1),
       description: 'El Hombre Increíble',
-      imageUrl: 'assets/images/hulk.jpg',
+      imageUrl: 'images/hulk.jpg',
     },
     {
       id: 7,
@@ -78,7 +78,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1962, 7, 1),
       description: 'El Dios del Trueno',
-      imageUrl: 'assets/images/thor.jpg',
+      imageUrl: 'images/thor.jpg',
     },
     {
       id: 8,
@@ -88,7 +88,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1956, 9, 1),
       description: 'El Velocista Escarlata',
-      imageUrl: 'assets/images/flash.jpg',
+      imageUrl: 'images/flash.jpg',
     },
     {
       id: 9,
@@ -98,7 +98,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1941, 2, 1),
       description: 'El Primer Vengador',
-      imageUrl: 'assets/images/capitanamerica.jpg',
+      imageUrl: 'images/capitanamerica.jpg',
     },
     {
       id: 10,
@@ -108,7 +108,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1974, 10, 1),
       description: 'El mutante inmortal',
-      imageUrl: 'assets/images/wolverine.jpg',
+      imageUrl: 'images/wolverine.jpg',
     },
     {
       id: 11,
@@ -118,7 +118,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1959, 9, 1),
       description: 'El Linterna Verde',
-      imageUrl: 'assets/images/greenlantern.jpg',
+      imageUrl: 'images/greenlantern.jpg',
     },
     {
       id: 12,
@@ -128,7 +128,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1964, 3, 1),
       description: 'La espía rusa',
-      imageUrl: 'assets/images/blackwidow.jpg',
+      imageUrl: 'images/blackwidow.jpg',
     },
     {
       id: 13,
@@ -142,7 +142,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1941, 10, 1),
       description: 'El Rey de los Mares',
-      imageUrl: 'assets/images/aquaman.jpg',
+      imageUrl: 'images/aquaman.jpg',
     },
     {
       id: 14,
@@ -152,7 +152,7 @@ export class HeroService {
       publisher: 'Marvel Comics',
       firstAppearance: new Date(1964, 8, 1),
       description: 'El mejor arquero del mundo',
-      imageUrl: 'assets/images/hawkeye.jpg',
+      imageUrl: 'images/hawkeye.jpg',
     },
     {
       id: 15,
@@ -162,7 +162,7 @@ export class HeroService {
       publisher: 'DC Comics',
       firstAppearance: new Date(1940, 3, 1),
       description: 'El chico maravilla',
-      imageUrl: 'assets/images/robin.jpg',
+      imageUrl: 'images/robin.jpg',
     },
   ];
 
