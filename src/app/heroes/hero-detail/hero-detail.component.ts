@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,7 +28,12 @@ import { HeroDeleteDialogComponent } from '../hero-delete-dialog/hero-delete-dia
   styleUrls: ['./hero-detail.component.scss'],
 })
 export class HeroDetailComponent implements OnInit {
-  hero: Hero | undefined;
+  hero = signal<Hero | undefined>(undefined);
+
+  heroExists = computed(() => !!this.hero());
+  heroColor = computed(() => this.getHeroColor(this.hero()));
+  heroPublisher = computed(() => this.hero()?.publisher || '');
+  heroPowers = computed(() => this.hero()?.powers || []);
 
   constructor(
     private route: ActivatedRoute,
@@ -46,7 +51,7 @@ export class HeroDetailComponent implements OnInit {
         })
       )
       .subscribe((hero) => {
-        this.hero = hero;
+        this.hero.set(hero);
         if (!hero) {
           this.router.navigate(['/heroes']);
         }
@@ -58,17 +63,17 @@ export class HeroDetailComponent implements OnInit {
   }
 
   editHero(): void {
-    if (this.hero) {
+    const currentHero = this.hero();
+    if (currentHero) {
       const dialogRef = this.dialog.open(HeroFormComponent, {
         width: '600px',
-        data: { hero: this.hero },
+        data: { hero: currentHero },
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe((result: Hero | null) => {
         if (result) {
-          this.heroService.updateHero(result).subscribe((updatedHero) => {
-            // Actualizar el héroe actual
-            this.hero = updatedHero;
+          this.heroService.updateHero(result).subscribe((updatedHero: Hero) => {
+            this.hero.set(updatedHero);
           });
         }
       });
@@ -76,27 +81,28 @@ export class HeroDetailComponent implements OnInit {
   }
 
   deleteHero(): void {
-    if (this.hero) {
+    const currentHero = this.hero();
+    if (currentHero) {
       const dialogRef = this.dialog.open(HeroDeleteDialogComponent, {
         width: '400px',
-        data: { hero: this.hero },
+        data: { hero: currentHero },
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe((result: boolean) => {
         if (result) {
-          this.heroService.deleteHero(this.hero!.id).subscribe((success) => {
-            if (success) {
-              this.router.navigate(['/heroes']);
-            }
-          });
+          this.heroService
+            .deleteHero(currentHero.id)
+            .subscribe((success: boolean) => {
+              if (success) {
+                this.router.navigate(['/heroes']);
+              }
+            });
         }
       });
     }
   }
 
-  getHeroColor(heroToUse?: Hero): string {
-    const hero = heroToUse || this.hero;
-
+  private getHeroColor(hero?: Hero): string {
     if (!hero) return '#777777';
 
     if (hero.publisher === 'DC Comics') return '#0476F2';

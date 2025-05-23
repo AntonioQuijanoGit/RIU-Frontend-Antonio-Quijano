@@ -32,16 +32,10 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width clickable-field">
-    <mat-label>Primera aparición</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      formControlName="firstAppearance"
-    />
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
+  <div class="full-width date-field">
+    <label class="date-label">Primera aparición</label>
+    <input type="date" formControlName="firstAppearance" class="date-input" />
+  </div>
 
   <div class="full-width powers-section">
     <h3>Poderes</h3>

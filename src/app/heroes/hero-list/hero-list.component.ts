@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -12,10 +19,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HeroService } from '../../core/services/hero.service';
-import {
-  PaginationService,
-  PageState,
-} from '../../core/services/pagination.service';
+import { PaginationService } from '../../core/services/pagination.service';
 import { Hero } from '../../core/models/hero.model';
 import { HeroFormComponent } from '../hero-form/hero-form.component';
 import { HeroDeleteDialogComponent } from '../hero-delete-dialog/hero-delete-dialog.component';
@@ -41,27 +45,48 @@ import { Router } from '@angular/router';
   styleUrls: ['./hero-list.component.scss'],
 })
 export class HeroListComponent implements OnInit, OnDestroy {
-  heroes: Hero[] = [];
-  filteredHeroes: Hero[] = [];
-  displayedHeroes: Hero[] = [];
-  paginationState: PageState = {
-    pageIndex: 0,
-    pageSize: 5,
-    pageSizeOptions: [5, 10, 25],
-    totalItems: 0,
-  };
+  heroes = signal<Hero[]>([]);
+  searchTerm = signal('');
+  publisherFilter = signal<string | null>(null);
+  viewMode = signal<'grid' | 'list'>('grid');
 
-  // Add
-  publisherFilter: string | null = null;
+  filteredHeroes = computed(() => {
+    let filtered = this.heroes();
+
+    const searchValue = this.searchTerm().toLowerCase();
+    if (searchValue) {
+      filtered = filtered.filter((hero) =>
+        hero.name.toLowerCase().includes(searchValue)
+      );
+    }
+
+    const publisher = this.publisherFilter();
+    if (publisher) {
+      filtered = filtered.filter((hero) => hero.publisher === publisher);
+    }
+
+    return filtered;
+  });
+
+  totalHeroes = computed(() => this.heroes().length);
+  filteredCount = computed(() => this.filteredHeroes().length);
+  hasFilter = computed(() => !!this.searchTerm() || !!this.publisherFilter());
+
+  availablePublishers = computed(() => {
+    const publishers = this.heroes().map((hero) => hero.publisher);
+    return [...new Set(publishers)].filter(Boolean).sort();
+  });
+
+  displayedHeroes!: any;
+  currentPage!: any;
+  pageSize!: any;
+  totalPages!: any;
+  hasNextPage!: any;
+  hasPreviousPage!: any;
 
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
-  private paginationSubscription!: Subscription;
 
-  // View mode control
-  viewMode: 'grid' | 'list' = 'grid';
-
-  // Table columns
   displayedColumns: string[] = [
     'id',
     'name',
@@ -76,10 +101,18 @@ export class HeroListComponent implements OnInit, OnDestroy {
     private paginationService: PaginationService,
     private dialog: MatDialog,
     private router: Router
-  ) {}
+  ) {
+    effect(() => {
+      const filteredCount = this.filteredHeroes().length;
+      this.paginationService.setTotalItems(filteredCount);
+    });
+
+    effect(() => {
+      localStorage.setItem('heroViewMode', this.viewMode());
+    });
+  }
 
   ngOnInit(): void {
-    // Initialize
     this.paginationService.initialize({
       pageSize: 5,
       pageSizeOptions: [5, 10, 25],
@@ -87,89 +120,65 @@ export class HeroListComponent implements OnInit, OnDestroy {
       totalItems: 0,
     });
 
-    // Suscribe
-    this.paginationSubscription = this.paginationService
-      .getState()
-      .subscribe((state) => {
-        this.paginationState = state;
-        if (this.filteredHeroes.length > 0) {
-          this.updateDisplayedHeroes();
-        }
-      });
+    this.initializeComputedSignals();
 
-    // Get all heroes
-    this.heroService.getHeroes().subscribe((heroes) => {
-      this.heroes = heroes;
-      this.applyFilter();
+    this.heroService.getHeroes().subscribe((heroes: Hero[]) => {
+      this.heroes.set(heroes);
     });
 
-    // Subscribe to search field changes
     this.searchSubscription = this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe(() => {
+      .subscribe((value: string | null) => {
+        this.searchTerm.set(value || '');
         this.paginationService.resetToFirstPage();
-        this.applyFilter();
       });
 
     const savedViewMode = localStorage.getItem('heroViewMode');
     if (savedViewMode === 'grid' || savedViewMode === 'list') {
-      this.viewMode = savedViewMode as 'grid' | 'list';
+      this.viewMode.set(savedViewMode as 'grid' | 'list');
     }
+  }
+
+  private initializeComputedSignals(): void {
+    this.displayedHeroes = computed(() =>
+      this.paginationService.getPagedItems(this.filteredHeroes())
+    );
+
+    this.currentPage = this.paginationService.currentPage;
+    this.pageSize = this.paginationService.pageSize;
+    this.totalPages = this.paginationService.totalPages;
+    this.hasNextPage = this.paginationService.hasNextPage;
+    this.hasPreviousPage = this.paginationService.hasPreviousPage;
   }
 
   ngOnDestroy(): void {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
-    if (this.paginationSubscription) {
-      this.paginationSubscription.unsubscribe();
-    }
-  }
-
-  applyFilter(): void {
-    const filterValue = this.searchControl.value?.toLowerCase() || '';
-
-    let filtered = this.heroes;
-    if (filterValue) {
-      filtered = filtered.filter((hero) =>
-        hero.name.toLowerCase().includes(filterValue)
-      );
-    }
-
-    if (this.publisherFilter) {
-      filtered = filtered.filter(
-        (hero) => hero.publisher === this.publisherFilter
-      );
-    }
-
-    this.filteredHeroes = filtered;
-
-    // Update
-    this.paginationService.setTotalItems(this.filteredHeroes.length);
-    this.updateDisplayedHeroes();
   }
 
   filterByPublisher(publisher: string): void {
-    if (this.publisherFilter === publisher) {
-      this.publisherFilter = null;
+    if (this.publisherFilter() === publisher) {
+      this.publisherFilter.set(null);
     } else {
-      this.publisherFilter = publisher;
+      this.publisherFilter.set(publisher);
     }
-
-    // Regret
     this.paginationService.resetToFirstPage();
-    this.applyFilter();
   }
 
   clearPublisherFilter(): void {
-    this.publisherFilter = null;
-    this.applyFilter();
+    this.publisherFilter.set(null);
   }
 
-  updateDisplayedHeroes(): void {
-    this.displayedHeroes = this.paginationService.getPagedItems(
-      this.filteredHeroes
-    );
+  clearSearchFilter(): void {
+    this.searchTerm.set('');
+    this.searchControl.setValue('');
+  }
+
+  clearAllFilters(): void {
+    this.publisherFilter.set(null);
+    this.searchTerm.set('');
+    this.searchControl.setValue('');
   }
 
   onPageChange(event: PageEvent): void {
@@ -177,17 +186,13 @@ export class HeroListComponent implements OnInit, OnDestroy {
   }
 
   switchView(mode: 'grid' | 'list'): void {
-    this.viewMode = mode;
-    // Save
-    localStorage.setItem('heroViewMode', mode);
+    this.viewMode.set(mode);
   }
 
   getHeroColor(hero: Hero): string {
-    // Colors
     if (hero.publisher === 'DC Comics') return '#0476F2';
     if (hero.publisher === 'Marvel Comics') return '#EC1D24';
 
-    // Another hero
     let hash = 0;
     for (let i = 0; i < hero.name.length; i++) {
       hash = hero.name.charCodeAt(i) + ((hash << 5) - hash);
@@ -202,13 +207,11 @@ export class HeroListComponent implements OnInit, OnDestroy {
       width: '600px',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: Hero | null) => {
       if (result) {
-        this.heroService.addHero(result).subscribe((newHero) => {
-          // Update list
-          this.heroService.getHeroes().subscribe((heroes) => {
-            this.heroes = heroes;
-            this.applyFilter();
+        this.heroService.addHero(result).subscribe((newHero: Hero) => {
+          this.heroService.getHeroes().subscribe((heroes: Hero[]) => {
+            this.heroes.set(heroes);
           });
         });
       }
@@ -221,13 +224,11 @@ export class HeroListComponent implements OnInit, OnDestroy {
       data: { hero },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: Hero | null) => {
       if (result) {
-        this.heroService.updateHero(result).subscribe((updatedHero) => {
-          // Update list
-          this.heroService.getHeroes().subscribe((heroes) => {
-            this.heroes = heroes;
-            this.applyFilter();
+        this.heroService.updateHero(result).subscribe((updatedHero: Hero) => {
+          this.heroService.getHeroes().subscribe((heroes: Hero[]) => {
+            this.heroes.set(heroes);
           });
         });
       }
@@ -240,14 +241,12 @@ export class HeroListComponent implements OnInit, OnDestroy {
       data: { hero },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.heroService.deleteHero(hero.id).subscribe((success) => {
+        this.heroService.deleteHero(hero.id).subscribe((success: boolean) => {
           if (success) {
-            // Actualiza la lista de héroes
-            this.heroService.getHeroes().subscribe((heroes) => {
-              this.heroes = heroes;
-              this.applyFilter();
+            this.heroService.getHeroes().subscribe((heroes: Hero[]) => {
+              this.heroes.set(heroes);
             });
           }
         });

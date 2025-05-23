@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
 
 export interface PageState {
   pageIndex: number;
@@ -18,7 +17,6 @@ export interface PageEvent {
   providedIn: 'root',
 })
 export class PaginationService {
-  // default pagination settings
   private defaultState: PageState = {
     pageIndex: 0,
     pageSize: 5,
@@ -26,65 +24,70 @@ export class PaginationService {
     totalItems: 0,
   };
 
-  private stateSubject = new BehaviorSubject<PageState>(this.defaultState);
+  private state = signal<PageState>(this.defaultState);
+
+  public readonly pageState = this.state.asReadonly();
+  public readonly currentPage = computed(() => this.state().pageIndex);
+  public readonly pageSize = computed(() => this.state().pageSize);
+  public readonly totalItems = computed(() => this.state().totalItems);
+  public readonly totalPages = computed(() =>
+    Math.ceil(this.state().totalItems / this.state().pageSize)
+  );
+  public readonly hasNextPage = computed(
+    () => this.state().pageIndex < this.totalPages() - 1
+  );
+  public readonly hasPreviousPage = computed(() => this.state().pageIndex > 0);
 
   constructor() {}
 
-  // get current pagination state
-  getState(): Observable<PageState> {
-    return this.stateSubject.asObservable();
-  }
-
-  // handle page change event
   onPageChange(event: PageEvent): void {
-    const currentState = this.stateSubject.value;
-    this.stateSubject.next({
-      ...currentState,
+    this.state.update((current) => ({
+      ...current,
       pageIndex: event.pageIndex,
       pageSize: event.pageSize,
       totalItems: event.length,
-    });
+    }));
   }
 
   updateState(newState: Partial<PageState>): void {
-    const currentState = this.stateSubject.value;
-    this.stateSubject.next({
-      ...currentState,
+    this.state.update((current) => ({
+      ...current,
       ...newState,
-    });
+    }));
   }
 
   resetToFirstPage(): void {
-    const currentState = this.stateSubject.value;
-    this.stateSubject.next({
-      ...currentState,
+    this.state.update((current) => ({
+      ...current,
       pageIndex: 0,
-    });
+    }));
   }
 
-  // get items for current page
   getPagedItems<T>(items: T[]): T[] {
-    const { pageIndex, pageSize } = this.stateSubject.value;
+    const { pageIndex, pageSize } = this.state();
     const startIndex = pageIndex * pageSize;
     return items.slice(startIndex, startIndex + pageSize);
   }
 
   setTotalItems(count: number): void {
-    const currentState = this.stateSubject.value;
-    this.stateSubject.next({
-      ...currentState,
+    this.state.update((current) => ({
+      ...current,
       totalItems: count,
-    });
+    }));
   }
 
   initialize(config?: Partial<PageState>): void {
     if (config) {
-      this.stateSubject.next({
+      this.state.set({
         ...this.defaultState,
         ...config,
       });
     } else {
-      this.stateSubject.next(this.defaultState);
+      this.state.set(this.defaultState);
     }
+  }
+
+  getCurrentState(): PageState {
+    return this.state();
   }
 }

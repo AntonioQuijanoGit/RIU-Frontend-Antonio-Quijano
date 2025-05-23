@@ -1,44 +1,170 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SpinnerComponent } from '../../heroes/spinner/spinner.component';
-import { LoadingService } from '../../core/services/loading.service';
-import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { LoadingService } from './loading.service';
 
-describe('SpinnerComponent', () => {
-  let component: SpinnerComponent;
-  let fixture: ComponentFixture<SpinnerComponent>;
-  let mockLoadingService: jasmine.SpyObj<LoadingService>;
+describe('LoadingService', () => {
+  let service: LoadingService;
 
-  beforeEach(async () => {
-    const loadingServiceSpy = jasmine.createSpyObj(
-      'LoadingService',
-      ['show', 'hide'],
-      {
-        isLoading$: of(false),
-      }
-    );
-
-    await TestBed.configureTestingModule({
-      imports: [SpinnerComponent],
-      providers: [{ provide: LoadingService, useValue: loadingServiceSpy }],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(SpinnerComponent);
-    component = fixture.componentInstance;
-    mockLoadingService = TestBed.inject(
-      LoadingService
-    ) as jasmine.SpyObj<LoadingService>;
-    fixture.detectChanges();
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(LoadingService);
+    jasmine.clock().install();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  afterEach(() => {
+    jasmine.clock().uninstall();
   });
 
-  it('should inject LoadingService', () => {
-    expect(component.loadingService).toBe(mockLoadingService);
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 
-  it('should have access to isLoading$ observable', () => {
-    expect(component.loadingService.isLoading$).toBeDefined();
+  describe('Initial state', () => {
+    it('should start with loading false', () => {
+      expect(service.isLoading()).toBe(false);
+      expect(service.isCurrentlyLoading()).toBe(false);
+    });
+  });
+
+  describe('show() method', () => {
+    it('should set loading to true when called', () => {
+      service.show();
+
+      expect(service.isLoading()).toBe(true);
+      expect(service.isCurrentlyLoading()).toBe(true);
+    });
+
+    it('should automatically hide loading after 2000ms', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(2000);
+
+      expect(service.isLoading()).toBe(false);
+      expect(service.isCurrentlyLoading()).toBe(false);
+    });
+
+    it('should not hide loading before 2000ms', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(1999);
+
+      expect(service.isLoading()).toBe(true);
+    });
+
+    it('should clear previous timeout when called multiple times', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(1000);
+      expect(service.isLoading()).toBe(true);
+
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(1000);
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(1000);
+      expect(service.isLoading()).toBe(false);
+    });
+  });
+
+  describe('hide() method', () => {
+    it('should set loading to false when called', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      service.hide();
+
+      expect(service.isLoading()).toBe(false);
+      expect(service.isCurrentlyLoading()).toBe(false);
+    });
+
+    it('should clear the timeout when called', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      service.hide();
+      expect(service.isLoading()).toBe(false);
+
+      jasmine.clock().tick(2000);
+      expect(service.isLoading()).toBe(false);
+    });
+
+    it('should work correctly when called without previous show()', () => {
+      expect(service.isLoading()).toBe(false);
+
+      service.hide();
+
+      expect(service.isLoading()).toBe(false);
+      expect(service.isCurrentlyLoading()).toBe(false);
+    });
+
+    it('should work correctly when called multiple times', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      service.hide();
+      service.hide();
+      service.hide();
+
+      expect(service.isLoading()).toBe(false);
+      expect(service.isCurrentlyLoading()).toBe(false);
+    });
+  });
+
+  describe('isCurrentlyLoading() method', () => {
+    it('should return same value as isLoading signal', () => {
+      expect(service.isCurrentlyLoading()).toBe(service.isLoading());
+
+      service.show();
+      expect(service.isCurrentlyLoading()).toBe(service.isLoading());
+      expect(service.isCurrentlyLoading()).toBe(true);
+
+      service.hide();
+      expect(service.isCurrentlyLoading()).toBe(service.isLoading());
+      expect(service.isCurrentlyLoading()).toBe(false);
+    });
+  });
+
+  describe('Complex scenarios', () => {
+    it('should handle show() -> hide() -> show() sequence correctly', () => {
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      service.hide();
+      expect(service.isLoading()).toBe(false);
+
+      service.show();
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(2000);
+      expect(service.isLoading()).toBe(false);
+    });
+
+    it('should handle rapid show() calls correctly', () => {
+      service.show();
+      service.show();
+      service.show();
+
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(1999);
+      expect(service.isLoading()).toBe(true);
+
+      jasmine.clock().tick(1);
+      expect(service.isLoading()).toBe(false);
+    });
+
+    it('should handle show() followed by immediate hide()', () => {
+      service.show();
+      service.hide();
+
+      expect(service.isLoading()).toBe(false);
+
+      jasmine.clock().tick(2000);
+      expect(service.isLoading()).toBe(false);
+    });
   });
 });

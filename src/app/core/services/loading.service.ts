@@ -1,36 +1,36 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoadingService {
-  private isLoadingSubject = new BehaviorSubject<boolean>(false);
+  private isLoadingSignal = signal<boolean>(false);
   private timeoutId: any = null;
 
-  public isLoading$: Observable<boolean> = this.isLoadingSubject.asObservable();
+  public readonly isLoading = this.isLoadingSignal.asReadonly();
 
-  // show loading spinner
   show(): void {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
 
-    this.isLoadingSubject.next(true);
+    this.isLoadingSignal.set(true);
 
-    // auto hide after 2 seconds
     this.timeoutId = setTimeout(() => {
       this.hide();
     }, 2000);
   }
 
-  // hide loading spinner
   hide(): void {
-    this.isLoadingSubject.next(false);
+    this.isLoadingSignal.set(false);
 
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
     }
+  }
+
+  isCurrentlyLoading(): boolean {
+    return this.isLoading();
   }
 }
