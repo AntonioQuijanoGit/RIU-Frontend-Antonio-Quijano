@@ -1,40 +1,42 @@
-<div *ngIf="hero" class="hero-detail-container">
+<div *ngIf="heroExists()" class="hero-detail-container">
   <mat-card class="hero-detail-card">
-    <div class="hero-image-container" *ngIf="hero.imageUrl">
-      <img [src]="hero.imageUrl" [alt]="hero.name" class="hero-image" />
+    <div class="hero-image-container" *ngIf="hero()?.imageUrl">
+      <img [src]="hero()!.imageUrl" [alt]="hero()!.name" class="hero-image" />
     </div>
     <div
       class="hero-avatar"
-      *ngIf="!hero.imageUrl"
-      [style.background-color]="getHeroColor(hero)"
+      *ngIf="!hero()?.imageUrl"
+      [style.background-color]="heroColor()"
     >
-      <div class="hero-initial">{{ hero.name.charAt(0) }}</div>
+      <div class="hero-initial">{{ hero()!.name.charAt(0) }}</div>
     </div>
 
     <div class="hero-info">
-      <h1 class="hero-name">{{ hero.name }}</h1>
-      <h2 class="hero-alter-ego" *ngIf="hero.alterEgo">{{ hero.alterEgo }}</h2>
+      <h1 class="hero-name">{{ hero()!.name }}</h1>
+      <h2 class="hero-alter-ego" *ngIf="hero()?.alterEgo">
+        {{ hero()!.alterEgo }}
+      </h2>
 
-      <p class="publisher" *ngIf="hero.publisher">
-        <span class="publisher-tag">{{ hero.publisher }}</span>
+      <p class="publisher" *ngIf="heroPublisher()">
+        <span class="publisher-tag">{{ heroPublisher() }}</span>
       </p>
 
-      <div class="powers-section" *ngIf="hero.powers && hero.powers.length > 0">
+      <div class="powers-section" *ngIf="heroPowers().length > 0">
         <h3>Poderes</h3>
         <div class="powers-list">
           <span class="powers-label">Poderes:</span>
-          <span class="powers-text"> {{ hero.powers.join(", ") }}</span>
+          <span class="powers-text"> {{ heroPowers().join(", ") }}</span>
         </div>
       </div>
 
-      <div class="description-section" *ngIf="hero.description">
+      <div class="description-section" *ngIf="hero()?.description">
         <h3>Descripción</h3>
-        <p>{{ hero.description }}</p>
+        <p>{{ hero()!.description }}</p>
       </div>
 
-      <div class="first-appearance" *ngIf="hero.firstAppearance">
+      <div class="first-appearance" *ngIf="hero()?.firstAppearance">
         <h3>Primera aparición</h3>
-        <p>{{ hero.firstAppearance | date : "longDate" }}</p>
+        <p>{{ hero()!.firstAppearance | date : "longDate" }}</p>
       </div>
 
       <div class="action-buttons">

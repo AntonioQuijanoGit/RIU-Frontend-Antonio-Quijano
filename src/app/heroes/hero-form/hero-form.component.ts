@@ -11,8 +11,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import {
   MatDialogModule,
   MatDialogRef,
@@ -34,8 +32,6 @@ import { UppercaseDirective } from '../../core/directives/uppercase.directive';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatDialogModule,
     MatChipsModule,
     MatIconModule,

@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, delay, finalize } from 'rxjs/operators';
+import { Injectable, signal, computed } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { delay, finalize } from 'rxjs/operators';
 import { Hero } from '../models/hero.model';
 import { LoadingService } from './loading.service';
 
@@ -8,8 +8,7 @@ import { LoadingService } from './loading.service';
   providedIn: 'root',
 })
 export class HeroService {
-  // mock data for heroes
-  private heroes: Hero[] = [
+  private initialHeroes: Hero[] = [
     {
       id: 1,
       name: 'Superman',
@@ -166,25 +165,31 @@ export class HeroService {
     },
   ];
 
-  private heroesSubject = new BehaviorSubject<Hero[]>(this.heroes);
+  private heroes = signal<Hero[]>(this.initialHeroes);
+
+  public heroCount = computed(() => this.heroes().length);
+  public dcHeroes = computed(() =>
+    this.heroes().filter((hero) => hero.publisher === 'DC Comics')
+  );
+  public marvelHeroes = computed(() =>
+    this.heroes().filter((hero) => hero.publisher === 'Marvel Comics')
+  );
 
   constructor(private loadingService: LoadingService) {}
 
-  // get all heroes
   getHeroes(): Observable<Hero[]> {
     this.loadingService.show();
-    return this.heroesSubject.asObservable().pipe(
-      delay(800), // Simular retraso
+    return of(this.heroes()).pipe(
+      delay(800),
       finalize(() => this.loadingService.hide())
     );
   }
 
-  // find hero by id
   getHeroById(id: number): Observable<Hero | undefined> {
     this.loadingService.show();
-    return this.heroesSubject.pipe(
-      map((heroes) => heroes.find((hero) => hero.id === id)),
-      delay(800), // Simular retraso
+    const hero = this.heroes().find((h) => h.id === id);
+    return of(hero).pipe(
+      delay(800),
       finalize(() => this.loadingService.hide())
     );
   }
@@ -192,24 +197,27 @@ export class HeroService {
   findHeroesByName(term: string): Observable<Hero[]> {
     this.loadingService.show();
     const lowerCaseTerm = term.toLowerCase();
-    return this.heroesSubject.pipe(
-      map((heroes) =>
-        heroes.filter((hero) => hero.name.toLowerCase().includes(lowerCaseTerm))
-      ),
+    const filteredHeroes = this.heroes().filter((hero) =>
+      hero.name.toLowerCase().includes(lowerCaseTerm)
+    );
+
+    return of(filteredHeroes).pipe(
       delay(800),
       finalize(() => this.loadingService.hide())
     );
   }
 
-  // add new hero
   addHero(hero: Omit<Hero, 'id'>): Observable<Hero> {
     this.loadingService.show();
 
-    const maxId = this.heroes.reduce((max, h) => (h.id > max ? h.id : max), 0);
+    const currentHeroes = this.heroes();
+    const maxId = currentHeroes.reduce(
+      (max, h) => (h.id > max ? h.id : max),
+      0
+    );
     const newHero: Hero = { ...hero, id: maxId + 1 };
 
-    this.heroes = [...this.heroes, newHero];
-    this.heroesSubject.next(this.heroes);
+    this.heroes.update((current) => [...current, newHero]);
 
     return of(newHero).pipe(
       delay(1000),
@@ -217,15 +225,12 @@ export class HeroService {
     );
   }
 
-  // update existing hero
   updateHero(updatedHero: Hero): Observable<Hero> {
     this.loadingService.show();
 
-    this.heroes = this.heroes.map((hero) =>
-      hero.id === updatedHero.id ? updatedHero : hero
+    this.heroes.update((current) =>
+      current.map((hero) => (hero.id === updatedHero.id ? updatedHero : hero))
     );
-
-    this.heroesSubject.next(this.heroes);
 
     return of(updatedHero).pipe(
       delay(1000),
@@ -233,19 +238,30 @@ export class HeroService {
     );
   }
 
-  // delete hero
   deleteHero(id: number): Observable<boolean> {
     this.loadingService.show();
 
-    const initialLength = this.heroes.length;
-    this.heroes = this.heroes.filter((hero) => hero.id !== id);
+    const initialLength = this.heroes().length;
 
-    const success = initialLength > this.heroes.length;
-    this.heroesSubject.next(this.heroes);
+    this.heroes.update((current) => current.filter((hero) => hero.id !== id));
+
+    const success = initialLength > this.heroes().length;
 
     return of(success).pipe(
       delay(1000),
       finalize(() => this.loadingService.hide())
     );
+  }
+
+  getHeroesSync(): Hero[] {
+    return this.heroes();
+  }
+
+  getHeroByIdSync(id: number): Hero | undefined {
+    return this.heroes().find((h) => h.id === id);
+  }
+
+  getTotalHeroCount(): number {
+    return this.heroCount();
   }
 }

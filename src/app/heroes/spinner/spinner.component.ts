@@ -11,5 +11,9 @@ import { LoadingService } from '../../core/services/loading.service';
   styleUrls: ['./spinner.component.scss'],
 })
 export class SpinnerComponent {
-  constructor(public loadingService: LoadingService) {}
+  isLoading: any;
+
+  constructor(private loadingService: LoadingService) {
+    this.isLoading = this.loadingService.isLoading;
+  }
 }

@@ -1,5 +1,4 @@
 <div class="hero-list-container">
-  <!-- header with title -->
   <header class="app-header">
     <h1 class="app-title">
       <mat-icon class="title-icon">stars</mat-icon>
@@ -7,7 +6,6 @@
     </h1>
   </header>
 
-  <!-- search and controls -->
   <div class="controls-panel">
     <div class="search-container">
       <mat-form-field appearance="outline" color="primary">
@@ -22,11 +20,10 @@
     </div>
 
     <div class="action-controls">
-      <!-- view mode toggle -->
       <div class="view-selector" aria-label="Seleccionar modo de visualización">
         <button
           mat-button
-          [class.active]="viewMode === 'grid'"
+          [class.active]="viewMode() === 'grid'"
           (click)="switchView('grid')"
           aria-label="Ver como tarjetas"
         >
@@ -35,7 +32,7 @@
         </button>
         <button
           mat-button
-          [class.active]="viewMode === 'list'"
+          [class.active]="viewMode() === 'list'"
           (click)="switchView('list')"
           aria-label="Ver como lista"
         >
@@ -44,7 +41,6 @@
         </button>
       </div>
 
-      <!-- add button -->
       <button
         mat-raised-button
         style="background-color: #3f51b5; color: white"
@@ -60,14 +56,14 @@
   <section class="heroes-section">
     <div class="section-header">
       <h2 class="section-title">
-        {{ filteredHeroes.length }} superhéroes encontrados
+        {{ filteredCount() }} superhéroes encontrados
       </h2>
-      <!-- publisher filters -->
+
       <div class="filter-buttons">
         <button
           mat-stroked-button
           color="primary"
-          [class.active]="publisherFilter === 'Marvel Comics'"
+          [class.active]="publisherFilter() === 'Marvel Comics'"
           (click)="filterByPublisher('Marvel Comics')"
           class="filter-button"
         >
@@ -76,14 +72,14 @@
         <button
           mat-stroked-button
           color="primary"
-          [class.active]="publisherFilter === 'DC Comics'"
+          [class.active]="publisherFilter() === 'DC Comics'"
           (click)="filterByPublisher('DC Comics')"
           class="filter-button"
         >
           DC Comics
         </button>
         <button
-          *ngIf="publisherFilter"
+          *ngIf="publisherFilter()"
           mat-stroked-button
           (click)="clearPublisherFilter()"
           class="clear-filter-button"
@@ -94,10 +90,9 @@
       </div>
     </div>
 
-    <!-- grid view (cards) -->
-    <div *ngIf="viewMode === 'grid'" class="heroes-grid" role="list">
+    <div *ngIf="viewMode() === 'grid'" class="heroes-grid" role="list">
       <mat-card
-        *ngFor="let hero of displayedHeroes"
+        *ngFor="let hero of displayedHeroes()"
         class="hero-card"
         role="listitem"
         (click)="viewHeroDetail(hero.id)"
@@ -150,24 +145,21 @@
       </mat-card>
     </div>
 
-    <!-- table view -->
     <div
-      *ngIf="viewMode === 'list'"
+      *ngIf="viewMode() === 'list'"
       class="heroes-table-container mat-elevation-z2"
     >
       <table
         mat-table
-        [dataSource]="displayedHeroes"
+        [dataSource]="displayedHeroes()"
         class="heroes-table"
         aria-label="Lista de superhéroes"
       >
-        <!-- ID column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef scope="col">ID</th>
           <td mat-cell *matCellDef="let hero">{{ hero.id }}</td>
         </ng-container>
 
-        <!-- Name column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef scope="col">Nombre</th>
           <td mat-cell *matCellDef="let hero">
@@ -210,7 +202,6 @@
           </td>
         </ng-container>
 
-        <!-- Actions column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef scope="col">Acciones</th>
           <td mat-cell *matCellDef="let hero" class="actions-cell">
@@ -244,16 +235,15 @@
     </div>
   </section>
 
-  <!-- pagination -->
   <div class="pagination-container">
     <mat-paginator
-      [length]="paginationState.totalItems"
-      [pageSize]="paginationState.pageSize"
-      [pageSizeOptions]="paginationState.pageSizeOptions"
-      [pageIndex]="paginationState.pageIndex"
+      [length]="filteredCount()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25]"
+      [pageIndex]="currentPage()"
       (page)="onPageChange($event)"
       aria-label="Seleccionar página"
     >
     </mat-paginator>
   </div>
- </div>
+</div>
