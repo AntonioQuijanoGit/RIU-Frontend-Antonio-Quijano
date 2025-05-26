@@ -6,7 +6,13 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:safe": "ng test --code-coverage --watch=false --browsers=ChromeHeadless",
+    "test:compatibility": "ng test --code-coverage --watch=false --disable-animations"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "private": true,
   "dependencies": {
